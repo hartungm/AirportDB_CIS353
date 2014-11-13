@@ -6,7 +6,7 @@ CIS 353 - Database Design Project (PEMN-X Airport)
 Nick Bushen
 Patrick Dishaw
 Evan Dunne
-Michael Hartune
+Michael Hartung
 Xinyi Ou
 */ 
 -- -----------------------------------------------------------------------------
@@ -20,7 +20,8 @@ DROP TABLE Employee CASCADE CONSTRAINTS;
 DROP TABLE Certifications CASCADE CONSTRAINTS;
 DROP TABLE Works_On CASCADE CONSTRAINTS;
 DROP TABLE Passenger_Flight_Info CASCADE CONSTRAINTS;
-DROP TABLE Seat_On_Flight CASCADE CONSTRAINTS;
+DROP TABLE Seats_On_Flight CASCADE CONSTRAINTS;
+--
 -- -----------------------------------------------------------------------------
 -- Create the tables
 -- -----------------------------------------------------------------------------
@@ -36,7 +37,7 @@ CONSTRAINT passIC1 PRIMARY KEY (passenger_id),
 CONSTRAINT passIC2 FOREIGN KEY (guardian) REFERENCES passenger(passenger_id)
 	ON DELETE CASCADE
 	DEFERRABLE INITIALLY DEFERRED,
--- passIC3: if a passenger's age is less than 16, he or she must have a guardian
+-- passIC3: if a passenger's age is 16 or under, he or she must have a guardian
 CONSTRAINT passIC3 CHECK (guardian IS NOT NULL OR age > 16)
 );
 --
@@ -68,7 +69,7 @@ CREATE TABLE Flight(
 	gate CHAR(3) NOT NULL,
 	plane_id INTEGER NOT NULL
 --
--- flightIC1: flight IDs must be unique
+-- flightIC1: flight IDs are unique
 CONSTRAINT flightIC1 PRIMARY KEY (fid),
 -- flightIC2: flight must have different origin and destination
 CONSTRAINT flightIC2 CHECK (NOT origin = destination),
@@ -82,18 +83,24 @@ CREATE TABLE Employee(
 	essn INTEGER PRIMARY KEY,
 	name CHAR(20) NOT NULL,
 	job_title CHAR(20) NOT NULL
+--
+-- <<more constraints needed!>>
 );
 --
 CREATE TABLE Certifications(
 	essn INTEGER,
 	certificate CHAR(20),
 	PRIMARY KEY(essn, certificate)
+--
+-- <<more constraints needed!>>
 );
 --
 CREATE TABLE Works_On(
 	essn INTEGER,
 	fid INTEGER,
 	PRIMARY KEY(essn, fid)
+--
+-- <<more constraints needed!>>
 );
 --
 CREATE TABLE Passenger_Flight_Info(
@@ -101,6 +108,7 @@ CREATE TABLE Passenger_Flight_Info(
 	fid INTEGER,
 	seat_number INTEGER NOT NULL,
 	PRIMARY KEY(passenger_id, fid)
+-- <<more constraints needed!>>
 );
 --
 CREATE TABLE Seat_On_Flight(
@@ -108,6 +116,8 @@ CREATE TABLE Seat_On_Flight(
 	seat_number INTEGER NOT NULL,
 	seat_type CHAR(10) NOT NULL,
 	PRIMARY KEY(fid, seat_number)
+--
+-- <<more constraints needed!>>
 );
 --
 SET FEEDBACK OFF 
@@ -147,7 +157,7 @@ SET FEEDBACK ON
 COMMIT 
 -- 
 -- -----------------------------------------------------------------------------
--- Show database instance
+-- Show the database instance
 -- -----------------------------------------------------------------------------
 -- 
 SELECT * FROM Passenger;
@@ -158,7 +168,7 @@ SELECT * FROM Employee;
 SELECT * FROM Certifications;
 SELECT * FROM Works_On;
 SELECT * FROM Passenger_Flight_Info;
-SELECT * FROM Seat_On_Flight;
+SELECT * FROM Seats_On_Flight;
 --
 -- -----------------------------------------------------------------------------
 -- Perform SQL Queries
@@ -226,6 +236,18 @@ english description goes here
 --A comment line stating: Testing: < IC name> 
 --A SQL INSERT, DELETE, or UPDATE that will test the IC.
 --
+/* Testing: PassIC1 */
+INSERT INTO Passengers VALUES (10, 'Jonathan Rosales', 29, NULL);
+--
+/* Testing: PassIC2 */
+INSERT INTO Passengers VALUES (5, 'Mary Ramus', 54, 2);
+--
+/* Testing: PassIC3 */
+INSERT INTO Passengers VALUES (1, 'Trinity Marcus', 8, NULL);
+
+/* Testing: PassIC3 */
+INSERT INTO Passengers VALUES (1, 'Trinity Marcus', 16, NULL);
+
 COMMIT 
 -- 
 SET ECHO OFF
