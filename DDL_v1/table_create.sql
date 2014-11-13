@@ -41,7 +41,7 @@ CONSTRAINT passIC3 CHECK (guardian IS NOT NULL OR age > 16)
 );
 --
 CREATE TABLE Plane(
-	plane_id INTEGER PRIMARY KEY,
+	plane_id INTEGER,
 	seating_capacity INTEGER NOT NULL,
 --
 -- planeIC1: plane IDs are unique
@@ -65,13 +65,17 @@ CREATE TABLE Flight(
 	destination CHAR(40) NOT NULL,
 	ETD TIMESTAMP NOT NULL,
 	duration INTEGER NOT NULL,
-	gate CHAR(10) NOT NULL, /*gate at PEMN-X airport*/
+	gate CHAR(3) NOT NULL,
 	plane_id INTEGER NOT NULL
 --
 -- flightIC1: flight IDs must be unique
 CONSTRAINT flightIC1 PRIMARY KEY (fid),
 -- flightIC2: flight must have different origin and destination
-CONSTRAINT flightIC2 CHECK (NOT origin = destination)
+CONSTRAINT flightIC2 CHECK (NOT origin = destination),
+-- flightIC3: flight duration must be greater than zero
+CONSTRAINT flightIC3 CHECK (duration > 0)
+-- flightIC4: gate name must be a gate from PEMN-X airport
+CONSTRAINT flightIC4 CHECK gate IN ('A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B3', 'B4')
 );
 --
 CREATE TABLE Employee(
@@ -111,7 +115,23 @@ SET FEEDBACK OFF
 -- -----------------------------------------------------------------------------
 -- Add the Foreign Keys
 -- -----------------------------------------------------------------------------
---<<<add SQL code here>>>
+ALTER TABLE Maintained
+ADD CONSTRAINT fk1 (plane_id) REFERENCES Plane(plane_id)
+ON UPDATE CASCADE
+ON DELETE CASCADE
+Deferrable initially deferred;
+--
+ALTER Table Maintained
+ADD CONSTRAINT fk2 (essn) REFERENCES Employee(essn)
+ON UPDATE CASCADE
+Deferrable initially deferred;
+--
+ALTER TABLE Flight 
+ADD CONSTRAINT fk3 (plane_id) REFERENCES Plane(plane_id)
+ON UPDATE CASCADE
+Deferrable initially deferred;
+--
+-- <<More foreign keys needed for tables after listed after flight>>
 --
 -- -----------------------------------------------------------------------------
 -- Populate the database instance
