@@ -20,21 +20,34 @@ DROP TABLE Employee CASCADE CONSTRAINTS;
 DROP TABLE Certifications CASCADE CONSTRAINTS;
 DROP TABLE Works_On CASCADE CONSTRAINTS;
 DROP TABLE Passenger_Flight_Info CASCADE CONSTRAINTS;
-DROP TABLE Seats_On_Flight CASCADE CONSTRAINTS;
+DROP TABLE Seat_On_Flight CASCADE CONSTRAINTS;
 -- -----------------------------------------------------------------------------
 -- Create the tables
 -- -----------------------------------------------------------------------------
 CREATE TABLE Passenger(
-	passenger_id INTEGER PRIMARY KEY,
+	passenger_id INTEGER,
 	name CHAR(20) NOT NULL,
 	age INTEGER NOT NULL,
 	guardian INTEGER /*Passengers over 16 do not need a guardian*/
+--
+-- passIC1: passenger IDs are unique
+CONSTRAINT passIC1 PRIMARY KEY (passenger_id),
+-- passIC2: every guardian must be a passenger too	
+CONSTRAINT passIC2 FOREIGN KEY (guardian) REFERENCES passenger(passenger_id)
+	ON DELETE CASCADE
+	DEFERRABLE INITIALLY DEFERRED,
+-- passIC3: if a passenger's age is less than 16, he or she must have a guardian
+CONSTRAINT passIC3 CHECK (guardian IS NOT NULL OR age > 16)
 );
 --
 CREATE TABLE Plane(
 	plane_id INTEGER PRIMARY KEY,
 	seating_capacity INTEGER NOT NULL,
-	carrying_weight DOUBLE PRECISION NOT NULL
+--
+-- planeIC1: plane IDs are unique
+CONSTRAINT planeIC1 PRIMARY KEY (plane, id),
+-- planeIC2: seating_capacity must be greater than zero
+CONSTRAINT planeIC2 CHECK (seating_capacity > 0)
 );
 --
 CREATE TABLE Maintained(
@@ -46,12 +59,12 @@ CREATE TABLE Maintained(
 --
 CREATE TABLE Flight(
 	fid INTEGER PRIMARY KEY,
-	origin CHAR(40),
-	destination CHAR(40),
-	ETD TIMESTAMP,
-	duration INTEGER,
-	gate CHAR(10),
-	plane_id INTEGER
+	origin CHAR(40) NOT NULL,
+	destination CHAR(40) NOT NULL,
+	ETD TIMESTAMP NOT NULL,
+	duration INTEGER NOT NULL,
+	gate CHAR(10) NOT NULL, /*gate at PEMN-X airport*/
+	plane_id INTEGER NOT NULL
 );
 --
 CREATE TABLE Employee(
@@ -75,15 +88,14 @@ CREATE TABLE Works_On(
 CREATE TABLE Passenger_Flight_Info(
 	passenger_id INTEGER,
 	fid INTEGER,
-	seat_number INTEGER,
-	pieces_of_luggage INTEGER,
-	PRIMARY KEY(passenger_id, fid, seat_number)
+	seat_number INTEGER NOT NULL,
+	PRIMARY KEY(passenger_id, fid)
 );
 --
-CREATE TABLE Seats_On_Flight(
+CREATE TABLE Seat_On_Flight(
 	fid INTEGER,
-	seat_number INTEGER,
-	seat_type CHAR(10),
+	seat_number INTEGER NOT NULL,
+	seat_type CHAR(10) NOT NULL,
 	PRIMARY KEY(fid, seat_number)
 );
 --
@@ -92,9 +104,7 @@ SET FEEDBACK OFF
 -- -----------------------------------------------------------------------------
 -- Add the Foreign Keys
 -- -----------------------------------------------------------------------------
-ALTER TABLE passenger
-ADD FOREIGN KEY (guardian) references passenger(passenger_id)
-Deferrable initially deferred;
+--<<<add SQL code here>>>
 --
 -- -----------------------------------------------------------------------------
 -- Populate the database instance
@@ -120,7 +130,7 @@ SELECT * FROM Employee;
 SELECT * FROM Certifications;
 SELECT * FROM Works_On;
 SELECT * FROM Passenger_Flight_Info;
-SELECT * FROM Seats_On_Flight;
+SELECT * FROM Seat_On_Flight;
 --
 --< The SQL queries>. Include the following for each query: 
 --1. A comment line stating the query number and the feature(s) it demonstrates 
