@@ -126,8 +126,9 @@ INSERT INTO Passengers VALUES (15, 'Ai Mei', 11, 10); /*needs guardian--Xinyi*/
 SET FEEDBACK ON 
 COMMIT 
 -- 
---< One query (per table) of the form: SELECT * FROM table; in order to print out your 
---database > 
+-- -----------------------------------------------------------------------------
+-- Show database instance
+-- -----------------------------------------------------------------------------
 -- 
 SELECT * FROM Passenger;
 SELECT * FROM Plane;
@@ -139,19 +140,66 @@ SELECT * FROM Works_On;
 SELECT * FROM Passenger_Flight_Info;
 SELECT * FROM Seat_On_Flight;
 --
---< The SQL queries>. Include the following for each query: 
+-- -----------------------------------------------------------------------------
+-- Perform SQL Queries
+-- -----------------------------------------------------------------------------
+--Include the following for each query: 
 --1. A comment line stating the query number and the feature(s) it demonstrates 
 --(e.g. – Q25 – correlated subquery). 
 --2. A comment line stating the query in English. 
 --3. The SQL code for the query. 
--- 
 --
-/* (Q1) - self-join
+--IMPORTANT: You may of course demonstrate more than one feature in any one query 
+--and thus end up having to write fewer, but more interesting, queries. 
+--
+/* (Q1) - A join involving at least four relations
+english description goes here
+*/
+--<<<SQL CODE GOES HERE>>>
+--
+/* (Q2) - A self-join
  Find the passenger_id, name, and age of every passenger that has a guardian.
 */
 -- <<<SQL CODE GOES HERE>>>
 --
+/* (Q3) - UNION, INTERSECT, and/or MINUS in a query
+english description goes here
+*/
+-- <<<SQL CODE GOES HERE>>>
 --
+/* (Q4) - SUM, AVG, MAX, and/or MIN in a query
+english description goes here
+*/
+-- <<<SQL CODE GOES HERE>>>
+--
+/* (Q5) - GROUP BY, HAVING, and ORDER BY, all appearing in the same query
+english description goes here
+*/
+-- <<<SQL CODE GOES HERE>>>
+--
+/* (Q6) - A correlated subquery
+english description goes here
+*/
+-- <<<SQL CODE GOES HERE>>>
+--
+/* (Q7) - A non-correlated subquery
+english description goes here
+*/
+-- <<<SQL CODE GOES HERE>>>
+--
+/* (Q8) -  A relational DIVISION query
+english description goes here
+*/
+-- <<<SQL CODE GOES HERE>>>
+--
+/* (Q9) - An outer join query
+english description goes here
+*/
+-- <<<SQL CODE GOES HERE>>>
+--
+-- -----------------------------------------------------------------------------
+-- Test Integrity Constraints
+-- -----------------------------------------------------------------------------
 --< The insert/delete/update statements to test the enforcement of ICs > 
 --Include the following items for every IC that you test (Important: see the next section titled 
 --“Submit a final report” regarding which ICs to test). 
