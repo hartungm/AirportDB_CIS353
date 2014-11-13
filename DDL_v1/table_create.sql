@@ -54,17 +54,24 @@ CREATE TABLE Maintained(
 	plane_id INTEGER,
 	service_date TIMESTAMP,
 	essn INTEGER,
-	PRIMARY KEY(plane_id, service_date, essn)
+--
+-- mainIC1: maintenance record has unique plane, timestamp, and personnel
+CONSTRAINT mainIC1 PRIMARY KEY(plane_id, service_date, essn)
 );
 --
 CREATE TABLE Flight(
-	fid INTEGER PRIMARY KEY,
+	fid INTEGER,
 	origin CHAR(40) NOT NULL,
 	destination CHAR(40) NOT NULL,
 	ETD TIMESTAMP NOT NULL,
 	duration INTEGER NOT NULL,
 	gate CHAR(10) NOT NULL, /*gate at PEMN-X airport*/
 	plane_id INTEGER NOT NULL
+--
+-- flightIC1: flight IDs must be unique
+CONSTRAINT flightIC1 PRIMARY KEY (fid),
+-- flightIC2: flight must have different origin and destination
+CONSTRAINT flightIC2 CHECK (NOT origin = destination)
 );
 --
 CREATE TABLE Employee(
