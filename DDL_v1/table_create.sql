@@ -142,6 +142,28 @@ Deferrable initially deferred;
 -- <<More foreign keys needed for tables after listed after flight>>
 --
 -- -----------------------------------------------------------------------------
+-- Stored Procedures
+-- -----------------------------------------------------------------------------
+--
+/* (SP1)
+ Calculates the number of passengers currently booked on a given flight
+*/
+CREATE OR REPLACE FUNCTION numPassengers(id IN Passenger_Flight_Info.fid%TYPE) 
+RETURN INTEGER IS
+--
+num INTEGER;
+  BEGIN
+    SELECT Count(*) INTO num
+    FROM Passenger_Flight_Info F
+    WHERE F.fid = id;
+  RETURN num;
+END numPassengers;
+/
+SHOW ERROR 
+SELECT OBJECT_NAME FROM USER_PROCEDURES;
+--
+--
+-- -----------------------------------------------------------------------------
 -- Populate the database instance
 -- -----------------------------------------------------------------------------
 --< The INSERT statements that populate the tables> 
