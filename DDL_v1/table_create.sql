@@ -65,7 +65,7 @@ CREATE TABLE Flight(
 	origin CHAR(40) NOT NULL,
 	destination CHAR(40) NOT NULL,
 	ETD TIMESTAMP NOT NULL,
-	duration INTEGER NOT NULL,
+	ETA TIMESTAMP NOT NULL,
 	gate CHAR(3) NOT NULL,
 	plane_id INTEGER NOT NULL
 --
@@ -73,10 +73,11 @@ CREATE TABLE Flight(
 CONSTRAINT flightIC1 PRIMARY KEY (fid),
 -- flightIC2: flight must have different origin and destination
 CONSTRAINT flightIC2 CHECK (NOT origin = destination),
--- flightIC3: flight duration must be greater than zero
-CONSTRAINT flightIC3 CHECK (duration > 0)
+-- flightIC3: flight departure must precede flight arrival
+CONSTRAINT flightIC3 CHECK (ETD < ETA)
 -- flightIC4: gate name must be a gate from PEMN-X airport
-CONSTRAINT flightIC4 CHECK gate IN ('A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B3', 'B4')
+CONSTRAINT flightIC4 CHECK gate IN ('A1', 'A2', 'A3', 'A4', 
+				    'B1', 'B2', 'B3', 'B4')
 );
 --
 CREATE TABLE Employee(
@@ -127,13 +128,10 @@ SET FEEDBACK OFF
 -- -----------------------------------------------------------------------------
 ALTER TABLE Maintained
 ADD CONSTRAINT fk1 (plane_id) REFERENCES Plane(plane_id)
-ON UPDATE CASCADE
-ON DELETE CASCADE
 Deferrable initially deferred;
 --
 ALTER Table Maintained
 ADD CONSTRAINT fk2 (essn) REFERENCES Employee(essn)
-ON UPDATE CASCADE
 Deferrable initially deferred;
 --
 ALTER TABLE Flight 
@@ -152,6 +150,14 @@ Deferrable initially deferred;
 
 INSERT INTO Passengers VALUES (10, 'Xinyi Ou', 21, NULL);
 INSERT INTO Passengers VALUES (15, 'Ai Mei', 11, 10); /*needs guardian--Xinyi*/
+INSERT INTO Passengers VALUES (20, 'Eric Joffre', 54, NULL);
+-- <<<Need more values>>>
+--
+INSERT INTO Plane VALUES (100, 4);
+INSERT INTO Plane VALUES (200, 120);
+INSERT INTO Plane VALUES (300, 85);
+INSERT INTO Plane VALUES (400, 12);
+-- <<<Need more values>>>
 --
 SET FEEDBACK ON 
 COMMIT 
@@ -236,17 +242,17 @@ english description goes here
 --A comment line stating: Testing: < IC name> 
 --A SQL INSERT, DELETE, or UPDATE that will test the IC.
 --
-/* Testing: PassIC1 */
+/* Testing: PassIC1 (primary key)*/
 INSERT INTO Passengers VALUES (10, 'Jonathan Rosales', 29, NULL);
 --
-/* Testing: PassIC2 */
+/* Testing: PassIC2 (foreign key)*/
 INSERT INTO Passengers VALUES (5, 'Mary Ramus', 54, 2);
 --
 /* Testing: PassIC3 */
 INSERT INTO Passengers VALUES (1, 'Trinity Marcus', 8, NULL);
 
 /* Testing: PassIC3 */
-INSERT INTO Passengers VALUES (1, 'Trinity Marcus', 16, NULL);
+INSERT INTO Passengers VALUES (2, 'Abigail Lin', 16, NULL);
 
 COMMIT 
 -- 
