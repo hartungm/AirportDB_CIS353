@@ -47,7 +47,7 @@ CREATE TABLE Plane(
 	seating_capacity INTEGER NOT NULL,
 --
 -- planeIC1: plane IDs are unique
-CONSTRAINT planeIC1 PRIMARY KEY (plane, id),
+CONSTRAINT planeIC1 PRIMARY KEY (plane_id),
 -- planeIC2: seating_capacity must be greater than zero
 CONSTRAINT planeIC2 CHECK (seating_capacity > 0)
 );
