@@ -1,7 +1,8 @@
-SPOOL project.out
+﻿SPOOL project.out
 SET ECHO ON
 
 /* 
+Test Comment
 CIS 353 - Database Design Project (PEMN-X Airport)
 Nick Bushen
 Patrick Dishaw
