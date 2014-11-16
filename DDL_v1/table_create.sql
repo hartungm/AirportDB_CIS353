@@ -30,7 +30,7 @@ CREATE TABLE Passenger(
 	passenger_id INTEGER,
 	name CHAR(20) NOT NULL,
 	age INTEGER NOT NULL,
-	guardian INTEGER /*Passengers over 16 do not need a guardian*/
+	guardian INTEGER, /*Passengers over 16 do not need a guardian*/
 --
 -- passIC1: passenger IDs are unique
 CONSTRAINT passIC1 PRIMARY KEY (passenger_id),
@@ -68,14 +68,14 @@ CREATE TABLE Flight(
 	ETD TIMESTAMP NOT NULL,
 	ETA TIMESTAMP NOT NULL,
 	gate CHAR(3) NOT NULL,
-	plane_id INTEGER NOT NULL
+	plane_id INTEGER NOT NULL,
 --
 -- flightIC1: flight IDs are unique
 CONSTRAINT flightIC1 PRIMARY KEY (fid),
 -- flightIC2: flight must have different origin and destination
 CONSTRAINT flightIC2 CHECK (NOT origin = destination),
 -- flightIC3: flight departure must precede flight arrival
-CONSTRAINT flightIC3 CHECK (ETD < ETA)
+CONSTRAINT flightIC3 CHECK (ETD < ETA),
 -- flightIC4: gate name must be a gate from PEMN-X airport
 CONSTRAINT flightIC4 CHECK gate IN ('A1', 'A2', 'A3', 'A4', 
 				    'B1', 'B2', 'B3', 'B4')
