@@ -159,7 +159,6 @@ num INTEGER;
     WHERE F.fid = id;
   RETURN num;
 END numPassengers;
-/
 SHOW ERROR 
 SELECT OBJECT_NAME FROM USER_PROCEDURES;
 --
