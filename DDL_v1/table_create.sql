@@ -73,12 +73,12 @@ CREATE TABLE Flight(
 -- flightIC1: flight IDs are unique
 CONSTRAINT flightIC1 PRIMARY KEY (fid),
 -- flightIC2: flight must have different origin and destination
-CONSTRAINT flightIC2 CHECK (NOT origin = destination),
+CONSTRAINT flightIC2 CHECK (NOT (origin = destination)),
 -- flightIC3: flight departure must precede flight arrival
 CONSTRAINT flightIC3 CHECK (ETD < ETA),
 -- flightIC4: gate name must be a gate from PEMN-X airport
-CONSTRAINT flightIC4 CHECK gate IN ('A1', 'A2', 'A3', 'A4', 
-				    'B1', 'B2', 'B3', 'B4')
+CONSTRAINT flightIC4 CHECK (gate IN ('A1', 'A2', 'A3', 'A4', 
+				    'B1', 'B2', 'B3', 'B4'))
 );
 --
 CREATE TABLE Employee(
