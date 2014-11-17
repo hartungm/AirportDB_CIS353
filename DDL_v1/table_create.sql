@@ -178,16 +178,17 @@ INSERT INTO Passengers VALUES (30, 'Lucy Holloway', 24, NULL);
 INSERT INTO Passengers VALUES (35, 'Mohammed Tawfiq', 44, NULL);
 INSERT INTO Passengers VALUES (40, 'Nolan Joffrey', 5, 20);
 INSERT INTO Passengers VALUES (45, 'Declan Joffrey', 7, 20);
--- <<<Need more values>>>
 --
 INSERT INTO Plane VALUES (100, 4);
-INSERT INTO Plane VALUES (200, 120);
-INSERT INTO Plane VALUES (300, 85);
-INSERT INTO Plane VALUES (400, 12);
+INSERT INTO Plane VALUES (211, 120);
+INSERT INTO Plane VALUES (377, 85);
+INSERT INTO Plane VALUES (401, 12);
 INSERT INTO Plane VALUES (503, 10);
--- <<<Need more values>>>
 --
-INSERT INTO Maintained VALUES ();
+INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-01 07:35:21', );
+plane_id INTEGER,
+	service_date TIMESTAMP,
+	essn INTEGER,
 INSERT INTO Maintained VALUES ();
 INSERT INTO Maintained VALUES ();
 INSERT INTO Maintained VALUES ();
@@ -200,6 +201,20 @@ INSERT INTO Flight VALUES();
 INSERT INTO Flight VALUES();
 INSERT INTO Flight VALUES();
 INSERT INTO Flight VALUES();
+--
+INSERT INTO Employee VALUES(333-456-2314, 'Richard Marks', 'Mechanic');
+INSERT INTO Employee VALUES(568-242-1353, 'Betty Volls', 'Mechanic');
+INSERT INTO Employee VALUES();
+INSERT INTO Employee VALUES();
+INSERT INTO Employee VALUES();
+--
+INSERT INTO Certifications VALUES();
+INSERT INTO Certifications VALUES();
+INSERT INTO Certifications VALUES();
+INSERT INTO Certifications VALUES();
+INSERT INTO Certifications VALUES();
+INSERT INTO Certifications VALUES();
+
 SET FEEDBACK ON 
 COMMIT 
 -- 
