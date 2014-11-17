@@ -172,15 +172,34 @@ SELECT OBJECT_NAME FROM USER_PROCEDURES;
 
 INSERT INTO Passengers VALUES (10, 'Xinyi Ou', 21, NULL);
 INSERT INTO Passengers VALUES (15, 'Ai Mei', 11, 10); /*needs guardian--Xinyi*/
-INSERT INTO Passengers VALUES (20, 'Eric Joffre', 54, NULL);
+INSERT INTO Passengers VALUES (20, 'Eric Joffrey', 54, NULL);
+INSERT INTO Passengers VALUES (25, 'Allie Rowe', 31, NULL);
+INSERT INTO Passengers VALUES (30, 'Lucy Holloway', 24, NULL);
+INSERT INTO Passengers VALUES (35, 'Mohammed Tawfiq', 44, NULL);
+INSERT INTO Passengers VALUES (40, 'Nolan Joffrey', 5, 20);
+INSERT INTO Passengers VALUES (45, 'Declan Joffrey', 7, 20);
 -- <<<Need more values>>>
 --
 INSERT INTO Plane VALUES (100, 4);
 INSERT INTO Plane VALUES (200, 120);
 INSERT INTO Plane VALUES (300, 85);
 INSERT INTO Plane VALUES (400, 12);
+INSERT INTO Plane VALUES (503, 10);
 -- <<<Need more values>>>
 --
+INSERT INTO Maintained VALUES ();
+INSERT INTO Maintained VALUES ();
+INSERT INTO Maintained VALUES ();
+INSERT INTO Maintained VALUES ();
+INSERT INTO Maintained VALUES ();
+INSERT INTO Maintained VALUES ();
+INSERT INTO Maintained VALUES ();
+--
+INSERT INTO Flight VALUES();
+INSERT INTO Flight VALUES();
+INSERT INTO Flight VALUES();
+INSERT INTO Flight VALUES();
+INSERT INTO Flight VALUES();
 SET FEEDBACK ON 
 COMMIT 
 -- 
