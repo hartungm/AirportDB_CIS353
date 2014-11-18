@@ -174,39 +174,44 @@ INSERT INTO Passengers VALUES (10, 'Xinyi Ou', 21, NULL);
 INSERT INTO Passengers VALUES (15, 'Ai Mei', 11, 10); /*needs guardian--Xinyi*/
 INSERT INTO Passengers VALUES (20, 'Eric Joffrey', 54, NULL);
 INSERT INTO Passengers VALUES (25, 'Allie Rowe', 31, NULL);
-INSERT INTO Passengers VALUES (30, 'Lucy Holloway', 24, NULL);
+INSERT INTO Passengers VALUES (30, 'Lucille Holloway', 24, NULL);
 INSERT INTO Passengers VALUES (35, 'Mohammed Tawfiq', 44, NULL);
-INSERT INTO Passengers VALUES (40, 'Nolan Joffrey', 5, 20);
-INSERT INTO Passengers VALUES (45, 'Declan Joffrey', 7, 20);
+INSERT INTO Passengers VALUES (40, 'Adam Joffrey', 5, 20);
+INSERT INTO Passengers VALUES (45, 'Ada Joffrey', 7, 20);
 --
-INSERT INTO Plane VALUES (100, 4);
+INSERT INTO Plane VALUES (100, 6);
 INSERT INTO Plane VALUES (211, 120);
 INSERT INTO Plane VALUES (377, 85);
 INSERT INTO Plane VALUES (401, 12);
 INSERT INTO Plane VALUES (503, 10);
 --
-INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-01 07:35:21', );
-plane_id INTEGER,
-	service_date TIMESTAMP,
-	essn INTEGER,
-INSERT INTO Maintained VALUES ();
-INSERT INTO Maintained VALUES ();
-INSERT INTO Maintained VALUES ();
-INSERT INTO Maintained VALUES ();
-INSERT INTO Maintained VALUES ();
-INSERT INTO Maintained VALUES ();
+INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-01 07:35:21', 568-242-1353);
+INSERT INTO Maintained VALUES (401, TIMESTAMP '2014-10-31 18:04:56', 333-456-2314);
+INSERT INTO Maintained VALUES (211, TIMESTAMP '2014-11-04 09:37:40', 333-456-2314);
+INSERT INTO Maintained VALUES (377, TIMESTAMP '2014-11-10 16:12:22', 568-242-1353);
+INSERT INTO Maintained VALUES (503, TIMESTAMP '2014-11-15 14:53:01', 333-456-2314);
+INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-17 10:13:00', 568-242-1353);
+INSERT INTO Maintained VALUES (211, TIMESTAMP '2014-11-16 11:11:45', 333-456-2314);
 --
-INSERT INTO Flight VALUES();
-INSERT INTO Flight VALUES();
-INSERT INTO Flight VALUES();
-INSERT INTO Flight VALUES();
-INSERT INTO Flight VALUES();
+INSERT INTO Flight VALUES('Allendale, MI', 'Detroit, MI', TIMESTAMP '2014-11-21 10:32:00',
+		TIMESTAMP '2014-11-21 13:37:00', 'A3', 100);
+INSERT INTO Flight VALUES('Detroit, MI', 'Allendale, MI', TIMESTAMP '2014-11-21 5:15:00',
+		TIMESTAMP '2014-11-21 8:20:00', 'A3', 100);
+INSERT INTO Flight VALUES('Allendale, MI', 'Seattle, WA', TIMESTAMP '2014-11-23 12:19:00',
+		TIMESTAMP '2014-11-23 18:35:00', 'B1', 211);
+INSERT INTO Flight VALUES('Allendale, MI', 'Cincinnati, KY', TIMESTAMP '2014-11-22 14:09:00',
+		TIMESTAMP '2014-11-22 15:20:00', 'A4', 401);
+INSERT INTO Flight VALUES('Atlanta, GA', 'Allendale, MI', TIMESTAMP '2014-11-27 17:55:00', 
+		TIMESTAMP '2014-11-27 20:00:00', 'B2', 377);
 --
 INSERT INTO Employee VALUES(333-456-2314, 'Richard Marks', 'Mechanic');
-INSERT INTO Employee VALUES(568-242-1353, 'Betty Volls', 'Mechanic');
-INSERT INTO Employee VALUES();
-INSERT INTO Employee VALUES();
-INSERT INTO Employee VALUES();
+INSERT INTO Employee VALUES(568-240-1005, 'Elizabeth Volk', 'Mechanic');
+INSERT INTO Employee VALUES(487-224-1285, 'Annabelle VanSickle', 'Attendant');
+INSERT INTO Employee VALUES(235-669-4203, 'Mark DeRoy', 'Attendant');
+INSERT INTO Employee VALUES(476-090-9232, 'Erin Tripp', 'Attendant');
+INSERT INTO Employee VALUES(557-529-0975, 'Tricia Whittle', 'Pilot');
+INSERT INTO Employee VALUES(880-236-1376, 'Brody Young', 'Pilot');
+INSERT INTO Employee VALUES(234-612-4444, 'Olga Grianni', 'Pilot');
 --
 INSERT INTO Certifications VALUES();
 INSERT INTO Certifications VALUES();
