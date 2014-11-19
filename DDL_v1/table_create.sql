@@ -255,9 +255,11 @@ english description goes here
 --<<<SQL CODE GOES HERE>>>
 --
 /* (Q2) - A self-join
- Find the passenger_id, name, and age of every passenger that has a guardian.
+ Find the passenger_id, name, age, and guardian id of every passenger that has a guardian.
 */
--- <<<SQL CODE GOES HERE>>>
+SELECT p1.passenger_id, p1.name, p1.age, p2.passenger_id
+FROM Passenger p1, Passenger p2
+WHERE p1.guardian = p2.passenger_id;
 --
 /* (Q3) - UNION, INTERSECT, and/or MINUS in a query
 english description goes here
