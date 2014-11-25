@@ -178,31 +178,28 @@ INSERT INTO Passengers VALUES (30, 'Lucille Holloway', 24, NULL);
 INSERT INTO Passengers VALUES (35, 'Mohammed Tawfiq', 44, NULL);
 INSERT INTO Passengers VALUES (40, 'Adam Joffrey', 5, 20);
 INSERT INTO Passengers VALUES (45, 'Ada Joffrey', 7, 20);
+INSERT INTO Passengers VALUES (50, 'Jonathan Ramirez', 19, NULL);
 --
 INSERT INTO Plane VALUES (100, 6);
 INSERT INTO Plane VALUES (211, 120);
 INSERT INTO Plane VALUES (377, 85);
 INSERT INTO Plane VALUES (401, 12);
-INSERT INTO Plane VALUES (503, 10);
 --
 INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-01 07:35:21', 568-242-1353);
 INSERT INTO Maintained VALUES (401, TIMESTAMP '2014-10-31 18:04:56', 333-456-2314);
 INSERT INTO Maintained VALUES (211, TIMESTAMP '2014-11-04 09:37:40', 333-456-2314);
 INSERT INTO Maintained VALUES (377, TIMESTAMP '2014-11-10 16:12:22', 568-242-1353);
-INSERT INTO Maintained VALUES (503, TIMESTAMP '2014-11-15 14:53:01', 333-456-2314);
 INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-17 10:13:00', 568-242-1353);
 INSERT INTO Maintained VALUES (211, TIMESTAMP '2014-11-16 11:11:45', 333-456-2314);
 --
-INSERT INTO Flight VALUES('Allendale, MI', 'Detroit, MI', TIMESTAMP '2014-11-21 10:32:00',
+INSERT INTO Flight VALUES(1024, 'Allendale, MI', 'Detroit, MI', TIMESTAMP '2014-11-21 10:32:00',
 		TIMESTAMP '2014-11-21 13:37:00', 'A3', 100);
-INSERT INTO Flight VALUES('Detroit, MI', 'Allendale, MI', TIMESTAMP '2014-11-21 5:15:00',
+INSERT INTO Flight VALUES(2204, 'Detroit, MI', 'Allendale, MI', TIMESTAMP '2014-11-21 5:15:00',
 		TIMESTAMP '2014-11-21 8:20:00', 'A3', 100);
-INSERT INTO Flight VALUES('Allendale, MI', 'Seattle, WA', TIMESTAMP '2014-11-23 12:19:00',
-		TIMESTAMP '2014-11-23 18:35:00', 'B1', 211);
-INSERT INTO Flight VALUES('Allendale, MI', 'Cincinnati, KY', TIMESTAMP '2014-11-22 14:09:00',
+INSERT INTO Flight VALUES(9705, 'Allendale, MI', 'Seattle, WA', TIMESTAMP '2014-11-21 12:19:00',
+		TIMESTAMP '2014-11-21 18:35:00', 'B1', 211);
+INSERT INTO Flight VALUES(5536, 'Cincinnati, KY', 'Allendale, MI', TIMESTAMP '2014-11-22 14:09:00',
 		TIMESTAMP '2014-11-22 15:20:00', 'A4', 401);
-INSERT INTO Flight VALUES('Atlanta, GA', 'Allendale, MI', TIMESTAMP '2014-11-27 17:55:00', 
-		TIMESTAMP '2014-11-27 20:00:00', 'B2', 377);
 --
 INSERT INTO Employee VALUES(333-456-2314, 'Richard Marks', 'Mechanic');
 INSERT INTO Employee VALUES(568-240-1005, 'Elizabeth Volk', 'Mechanic');
@@ -212,6 +209,7 @@ INSERT INTO Employee VALUES(476-090-9232, 'Erin Tripp', 'Attendant');
 INSERT INTO Employee VALUES(557-529-0975, 'Tricia Whittle', 'Pilot');
 INSERT INTO Employee VALUES(880-236-1376, 'Brody Young', 'Pilot');
 INSERT INTO Employee VALUES(234-612-4444, 'Olga Grianni', 'Pilot');
+INSERT INTO Employee VALUES(777-956-2340, 'Matthew Ingall', 'Pilot');
 --
 INSERT INTO Certifications VALUES();
 INSERT INTO Certifications VALUES();
@@ -219,7 +217,41 @@ INSERT INTO Certifications VALUES();
 INSERT INTO Certifications VALUES();
 INSERT INTO Certifications VALUES();
 INSERT INTO Certifications VALUES();
-
+--
+INSERT INTO Works_On VALUES (487-224-1285, 1024); /*Annabelle, attendant*/
+INSERT INTO Works_On VALUES (234-612-4444, 1024); /*Olga, pilot1*/
+INSERT INTO Works_On VALUES (880-236-1376, 1024); /*Brody, pilot2*/
+INSERT INTO Works_On VALUES (487-224-1285, 2204); /*Annabelle, attendant*/
+INSERT INTO Works_On VALUES (880-236-1376, 2204); /*Brody, pilot1*/
+INSERT INTO Works_On VALUES (557-529-0975, 2204); /*Tricia, pilot2*/
+INSERT INTO Works_On VALUES (235-669-4203, 9705); /*Mark, attendant1*/
+INSERT INTO Works_On VALUES (476-090-9232, 9705); /*Erin, attendant2*/
+INSERT INTO Works_On VALUES (777-956-2340, 9705); /*Matthew, pilot1 */
+INSERT INTO Works_On VALUES (557-529-0975, 9705); /*Tricia, pilot2 */
+INSERT INTO Works_On VALUES (476-090-9232, 5536); /*Erin, attendant*/
+INSERT INTO Works_On VALUES (234-612-4444, 5536); /*Olga, pilot1*/
+INSERT INTO Works_On VALUES (880-236-1376, 5536); /*Brody, pilot2*/
+--
+INSERT INTO Passenger_Flight_Info VALUES (10, 1024, 1);
+INSERT INTO Passenger_Flight_Info VALUES (15, 1024, 2);
+INSERT INTO Passenger_Flight_Info VALUES (20, 1024, 3);
+INSERT INTO Passenger_Flight_Info VALUES (30, 1024, 4);
+INSERT INTO Passenger_Flight_Info VALUES (40, 1024, 5);
+INSERT INTO Passenger_Flight_Info VALUES (45, 1024, 6);
+INSERT INTO Passenger_Flight_Info VALUES (25, 2204, 4);
+INSERT INTO Passenger_Flight_Info VALUES (35, 9705, 88);
+INSERT INTO Passenger_Flight_Info VALUES (50, 5536, 10);
+--
+INSERT INTO Seat_On_Flight (1024, 1, 'Business');
+INSERT INTO Seat_On_Flight (1024, 2, 'Business');
+INSERT INTO Seat_On_Flight (1024, 3, 'Economy');
+INSERT INTO Seat_On_Flight (1024, 4, 'Economy');
+INSERT INTO Seat_On_Flight (1024, 5, 'Economy');
+INSERT INTO Seat_On_Flight (1024, 6, 'Economy');
+INSERT INTO Seat_On_Flight (2204, 4, 'First');
+INSERT INTO Seat_On_Flight (9705, 88, 'Economy');
+INSERT INTO Seat_On_Flight (5536, 10, 'First');
+--
 SET FEEDBACK ON 
 COMMIT 
 -- 
