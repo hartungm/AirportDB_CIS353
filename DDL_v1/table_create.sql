@@ -166,6 +166,11 @@ ADD CONSTRAINT fk3 (plane_id) REFERENCES Plane(plane_id)
 ON UPDATE CASCADE
 Deferrable initially deferred;
 --
+ALTER TABLE Passenger
+ADD CONSTRAINT fk4 (guardian) REFERENCES Passenger(passenger_id)
+ON UPDATE CASCADE
+Deferrable initially deferred;
+--
 -- <<More foreign keys needed for tables after listed after flight>>
 --
 -- -----------------------------------------------------------------------------
