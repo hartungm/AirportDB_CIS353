@@ -330,7 +330,7 @@ WHERE p.age > 18
 INTERSECT
 SELECT p1.passenger_id, p1.name
 FROM Passenger p1, Passenger p2
-WHERE p1.passenger_id = p2.guardian
+WHERE p1.passenger_id = p2.guardian;
 --
 /* (Q5) - GROUP BY, HAVING, and ORDER BY, all appearing in the same query
 Show the Passenger's ID, Name, and Number of flights they have been on for
