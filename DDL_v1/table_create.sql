@@ -308,41 +308,48 @@ SELECT * FROM Seats_On_Flight;
 --and thus end up having to write fewer, but more interesting, queries. 
 --
 /* (Q1) - A join involving at least four relations
-english description goes here
+   (Q4) - SUM, AVG, MAX, and/or MIN in a query
+   (Q6) - A correlated subquery
+	Find the essn, passenger_id, and service date
+	for an employee who serviced the plane/planes a passenger is flying on last.
 */
---<<<SQL CODE GOES HERE>>>
+SELECT m.essn, p.passenger_id, m.service_date
+FROM Passenger p, Flight f, Maintained m, Passenger_Flight_Info pf
+WHERE  p.passenger_id = pf.passenger_id AND pf.fid = f.fid AND f.plane_id = m.plane_id AND
+	   m.service_date IN (SELECT MAX (m.service_date)
+	   					 FROM Plane p
+	   					 WHERE m.plane_id = p.plane_id);
 --
-/* (Q2) - A self-join
- Find the passenger_id, name, age, and guardian id of every passenger that has a guardian.
+/* 	(Q2) - A self-join
+	(Q3) - UNION, INTERSECT, and/or MINUS in a query
+	Find all Passenger's ID and Name who are Guardians over 18 years old 
 */
-SELECT p1.passenger_id, p1.name, p1.age, p2.passenger_id
+SELECT p.passenger_id, p.name
+FROM Passenger p
+WHERE p.age > 18
+INTERSECT
+SELECT p1.passenger_id, p1.name
 FROM Passenger p1, Passenger p2
-WHERE p1.guardian = p2.passenger_id;
---
-/* (Q3) - UNION, INTERSECT, and/or MINUS in a query
-english description goes here
-*/
--- <<<SQL CODE GOES HERE>>>
---
-/* (Q4) - SUM, AVG, MAX, and/or MIN in a query
-english description goes here
-*/
--- <<<SQL CODE GOES HERE>>>
+WHERE p1.passenger_id = p2.guardian
 --
 /* (Q5) - GROUP BY, HAVING, and ORDER BY, all appearing in the same query
-english description goes here
+Show the Passenger's ID, Name, and Number of flights they have been on for
+all passengers who have been on more than 3 flights.
 */
--- <<<SQL CODE GOES HERE>>>
---
-/* (Q6) - A correlated subquery
-english description goes here
-*/
--- <<<SQL CODE GOES HERE>>>
+SELECT p.passenger_id, p.name, COUNT(*)
+FROM Passenger p, Passenger_Flight_Info pf
+WHERE p.passenger_id = pf.passenger_id
+GROUP BY p.passenger_id, p.name
+HAVING COUNT(*) > 3
+ORDER BY p.passenger_id;
 --
 /* (Q7) - A non-correlated subquery
-english description goes here
+Show the Passenger's ID and Name for any who have not yet been on a flight
 */
--- <<<SQL CODE GOES HERE>>>
+SELECT p.passenger_id, p.name
+FROM Passenger p
+WHERE p.passenger_id NOT IN (SELECT pf.passenger_id
+							 FROM Passenger_Flight_Info pf);
 --
 /* (Q8) -  A relational DIVISION query
 english description goes here
@@ -350,9 +357,10 @@ english description goes here
 -- <<<SQL CODE GOES HERE>>>
 --
 /* (Q9) - An outer join query
-english description goes here
+Show the Passenger ID and Name for every passenger, and show the planes they are flying on
 */
--- <<<SQL CODE GOES HERE>>>
+SELECT p.passenger_id, p.name, pf.fid
+FROM Passenger p LEFT OUTER JOIN Passenger_Flight_Info pf ON p.passenger_id = pf.passenger_id;
 --
 -- -----------------------------------------------------------------------------
 -- Test Integrity Constraints
