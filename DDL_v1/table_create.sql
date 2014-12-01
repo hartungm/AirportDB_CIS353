@@ -34,15 +34,19 @@ CREATE TABLE Passenger(
 --
 -- passIC1: passenger IDs are unique
 CONSTRAINT passIC1 PRIMARY KEY (passenger_id),
--- passIC2: every guardian must be a passenger too	
-CONSTRAINT passIC2 FOREIGN KEY (guardian) REFERENCES passenger(passenger_id)
-	ON DELETE CASCADE
-	DEFERRABLE INITIALLY DEFERRED,
--- passIC3: if a passenger's age is 16 or under, he or she must have a guardian
-CONSTRAINT passIC3 CHECK (guardian IS NOT NULL OR age > 16)
--- passIC4: age must be between 0 and 120 (reasonable for flying)
-CONSTRAINT passIC4 CHECK (age >= 0 AND age <= 120)
+--
+-- passIC2: if a passenger's age is 16 or under, he or she must have a guardian
+CONSTRAINT passIC2 CHECK (guardian IS NOT NULL OR age > 16)
+--
+-- passIC3: age must be between 0 and 120 (reasonable for flying)
+CONSTRAINT passIC3 CHECK (age >= 0 AND age <= 120)
+--
+CONSTRAINT passenger_fk1 FOREIGN KEY (guardian) REFERENCES passenger(passenger_id)
+ON DELETE CASCADE
+Deferrable initially deferred;
 );
+--
+--
 CREATE TABLE Plane(
 	plane_id INTEGER,
 	seating_capacity INTEGER NOT NULL,
@@ -53,6 +57,7 @@ CONSTRAINT planeIC1 PRIMARY KEY (plane, id),
 CONSTRAINT planeIC2 CHECK (seating_capacity > 0)
 );
 --
+--
 CREATE TABLE Maintained(
 	plane_id INTEGER,
 	service_date TIMESTAMP,
@@ -60,10 +65,19 @@ CREATE TABLE Maintained(
 --
 -- mainIC1: maintenance record has unique plane, timestamp, and personnel
 CONSTRAINT mainIC1 PRIMARY KEY(plane_id, service_date, essn)
+--
 -- mainIC2: Only maintenance workers can maintain on a plane (Not sure about this one)
 CONSTRAINT mainIC2 CHECK( VALUE IN (SELECT E.essn FROM Employee E WHERE E.job_title = 
 'mechanic')
+--
+CONSTRAINT maintained_fk1 FOREIGN KEY (plane_id) REFERENCES Plane(plane_id)
+ON DELETE CASCADE
+Deferrable initially deferred;
+--
+CONSTRAINT maintained_fk2 FOREIGN KEY (essn) REFERENCES Employee(essn)
+Deferrable initially deferred;
 );
+--
 --
 CREATE TABLE Flight(
 	fid INTEGER,
@@ -83,7 +97,12 @@ CONSTRAINT flightIC3 CHECK (ETD < ETA),
 -- flightIC4: gate name must be a gate from PEMN-X airport
 CONSTRAINT flightIC4 CHECK (gate IN ('A1', 'A2', 'A3', 'A4', 
 				    'B1', 'B2', 'B3', 'B4'))
+--
+CONSTRAINT flight_fk1 FOREIGN KEY (plane_id) REFERENCES Plane(plane_id)
+ON UPDATE CASCADE
+Deferrable initially deferred;
 );
+--
 --
 CREATE TABLE Employee(
 	essn INTEGER PRIMARY KEY,
@@ -95,16 +114,17 @@ CREATE TABLE Employee(
 CONSTRAINT emplIC1 CHECK (job_title IN ('pilot', 'attendant', 'mechanic')
 );
 --
+--
 CREATE TABLE Certifications(
 	essn INTEGER,
 	certificate CHAR(20) NOT NULL,
 	PRIMARY KEY(essn, certificate)
 --
 -- <<more constraints needed!>>
---CertIC1: An employee must exist to be certified
-CONSTRAINT CertIC1 FOREIGN KEY (essn) REFERENCES Employee(essn)
+CONSTRAINT certifications_fk1 FOREIGN KEY (essn) REFERENCES Employee(essn)
 Deferrable initially deferred;
 );
+--
 --
 CREATE TABLE Works_On(
 	essn INTEGER,
@@ -112,13 +132,14 @@ CREATE TABLE Works_On(
 	PRIMARY KEY(essn, fid)
 --
 -- <<more constraints needed!>>
--- WorkIC1: Employee must be in the Employee database
-CONSTRAINT WorkIC1 FOREIGN KEY (essn) REFERENCES Employee(essn)
-Deferrable initially deferred
--- WorkIC2: The flight that the employees work on must exist
-CONSTRAINT WorkIC2 FOREIGN KEY (fid) REFERENCES Flight(fid);
-Deferrable initially deferred
+--
+CONSTRAINT works_on_fk1 FOREIGN KEY (essn) REFERENCES Employee(essn)
+Deferrable initially deferred;
+--
+CONSTRAINT works_on_fk2 FOREIGN KEY (fid) REFERENCES Flight(fid)
+Deferrable initially deferred;
 );
+--
 --
 CREATE TABLE Passenger_Flight_Info(
 	passenger_id INTEGER,
@@ -126,52 +147,30 @@ CREATE TABLE Passenger_Flight_Info(
 	seat_number INTEGER NOT NULL,
 	PRIMARY KEY(passenger_id, fid)
 -- <<more constraints needed!>>
--- PassFlightIC1: passenger id must reference a passenger
-CONSTRAINT PassFlightIC1 FOREIGN KEY (passenger_id) REFERENCES Passenger(passenger_id)
-Deferrable initially deferred
--- PassFlightIC2: flight must exist
-CONSTRAINT PassFlightIC2 FOREIGN KEY (fid) REFERENCES Flight(fid)
-Deferrable initially deferred
+CONSTRAINT passenger_flight_info_fk1 FOREIGN KEY (passenger_id) REFERENCES Passenger(passenger_id)
+Deferrable initially deferred;
+--
+CONSTRAINT passenger_flight_info_fk2 FOREIGN KEY (fid) REFERENCES Flight(fid)
+Deferrable initially deferred;
 );
+--
 --
 CREATE TABLE Seat_On_Flight(
 	fid INTEGER,
 	seat_number INTEGER NOT NULL,
 	seat_type CHAR(10) NOT NULL,
 	PRIMARY KEY(fid, seat_number)
--- SeatOnIC1: flight must exist
-CONSTRAINT SeatOnIC1 FOREIGN KEY (fid) REFERENCES Flight(fid)
 -- SeatOnIC2: seat_number cannot be less than zero 
 -- (should/could we make this so that seat number is not greater than the seating 
 -- capacity for the plane we are flying on?)
 CONSTRAINT SeatOnIC1 CHECK seat_number > 0
+--
+CONSTRAINT seat_on_flight_fk1 FOREIGN KEY (fid) REFERENCES Flight(fid)
+Deferrable initially deferred;
 -- <<more constraints needed!>>
 );
 --
 SET FEEDBACK OFF 
---
--- -----------------------------------------------------------------------------
--- Add the Foreign Keys
--- -----------------------------------------------------------------------------
-ALTER TABLE Maintained
-ADD CONSTRAINT fk1 (plane_id) REFERENCES Plane(plane_id)
-Deferrable initially deferred;
---
-ALTER Table Maintained
-ADD CONSTRAINT fk2 (essn) REFERENCES Employee(essn)
-Deferrable initially deferred;
---
-ALTER TABLE Flight 
-ADD CONSTRAINT fk3 (plane_id) REFERENCES Plane(plane_id)
-ON UPDATE CASCADE
-Deferrable initially deferred;
---
-ALTER TABLE Passenger
-ADD CONSTRAINT fk4 (guardian) REFERENCES Passenger(passenger_id)
-ON UPDATE CASCADE
-Deferrable initially deferred;
---
--- <<More foreign keys needed for tables after listed after flight>>
 --
 -- -----------------------------------------------------------------------------
 -- Stored Procedures
