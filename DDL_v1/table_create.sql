@@ -65,7 +65,7 @@ CONSTRAINT mainIC1 PRIMARY KEY(plane_id, service_date, essn)
 --
 -- mainIC2: Only maintenance workers can maintain on a plane (Not sure about this one)
 CONSTRAINT mainIC2 CHECK( VALUE IN (SELECT E.essn FROM Employee E WHERE E.job_title = 
-'mechanic')
+'mechanic'))
 --
 );
 --
@@ -130,12 +130,16 @@ CREATE TABLE Seat_On_Flight(
 	seat_number INTEGER NOT NULL,
 	seat_type CHAR(10) NOT NULL,
 	PRIMARY KEY(fid, seat_number)
--- SeatOnIC2: seat_number cannot be less than zero 
+-- SeatOnIC1: seat_number cannot be less than zero 
 -- (should/could we make this so that seat number is not greater than the seating 
 -- capacity for the plane we are flying on?)
 CONSTRAINT SeatOnIC1 CHECK seat_number > 0
---
 -- <<more constraints needed!>>
+-- SeatOnIC2: seat_type must be in business, first, or economy
+CONSTRAINT SeatOnIC2 CHECK (seat_type IN ('Business', 'Economy', 'First'))
+-- SeatOnIC3: seat_number cannot be greater than the plane's capacity
+CONSTRAINT SeatOnIC3 CHECK (NOT (seat_number > (SELECT P.seating_capacity FROM Plane P
+, Seat_On_Flight S, Flight F WHERE F.fid = S.sid AND F.plane_id = P.plane_ID)))
 );
 --
 SET FEEDBACK OFF 
@@ -185,6 +189,10 @@ Deferrable initially deferred;
 --
 ALTER TABLE Seat_On_Flight
 ADD CONSTRAINT fk10 FOREIGN KEY (fid) REFERENCES Flight(fid)
+Deferrable initially deferred;
+--
+ALTER TABLE Passenger_Flight_Info
+ADD CONSTRAINT fk11 FOREIGN KEY (seat_number) REFERENCES Seat_On_Flight(seat_number)
 Deferrable initially deferred;
 --
 -- -----------------------------------------------------------------------------
