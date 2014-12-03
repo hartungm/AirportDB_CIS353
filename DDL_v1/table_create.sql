@@ -371,9 +371,19 @@ WHERE p.passenger_id NOT IN (SELECT pf.passenger_id
 							 FROM Passenger_Flight_Info pf);
 --
 /* (Q8) -  A relational DIVISION query
-english description goes here
+Shoe the essn and name of every employee who has worked on every flight in the A4 gate
 */
--- <<<SQL CODE GOES HERE>>>
+SELECT e.essn, e.name
+FROM Employee e
+WHERE NOT EXISTS ((SELECT f.gate
+				   FROM Flight f
+				   WHERE f.gate = 'A4')
+				 MINUS
+				   (SELECT f.gate
+				   	FROM Flight f, Works_On w
+				   	WHERE e.essn, w.essn AND
+				   		  w.fid = f.fid  AND
+				   		  f.gate = 'A4'));
 --
 /* (Q9) - An outer join query
 Show the Passenger ID and Name for every passenger, and show the planes they are flying on
