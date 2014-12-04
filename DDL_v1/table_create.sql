@@ -35,7 +35,7 @@ CREATE TABLE Passenger(
 CONSTRAINT passIC1 PRIMARY KEY (passenger_id),
 --
 -- passIC2: if a passenger's age is 16 or under, he or she must have a guardian
-CONSTRAINT passIC2 CHECK (guardian IS NOT NULL OR age > 16)
+CONSTRAINT passIC2 CHECK (guardian IS NOT NULL OR age > 16),
 --
 -- passIC3: age must be between 0 and 120 (reasonable for flying)
 CONSTRAINT passIC3 CHECK (age >= 0 AND age <= 120)
@@ -60,11 +60,11 @@ CREATE TABLE Maintained(
 	essn INTEGER,
 --
 -- mainIC1: maintenance record has unique plane, timestamp, and personnel
-CONSTRAINT mainIC1 PRIMARY KEY(plane_id, service_date, essn)
+CONSTRAINT mainIC1 PRIMARY KEY(plane_id, service_date, essn),
 --
 -- mainIC2: Only maintenance workers can maintain on a plane (Not sure about this one)
-CONSTRAINT mainIC2 CHECK( VALUE IN (SELECT E.essn FROM Employee E WHERE E.job_title = 
-'mechanic'))
+--CONSTRAINT mainIC2 CHECK( VALUE IN (SELECT E.essn FROM Employee E WHERE E.job_title = 
+--'mechanic'))
 --
 );
 --
@@ -96,7 +96,7 @@ CREATE TABLE Employee(
 	job_title CHAR(20) NOT NULL
 --
 -- empIC1: Essn must be unique
-CONSTRAINT empIC1 PRIMARY KEY (essn);
+CONSTRAINT empIC1 PRIMARY KEY (essn),
 -- empIC2: Job Title must either be pilot, attendant, or mechanic
 CONSTRAINT emplIC2 CHECK (job_title IN ('pilot', 'attendant', 'mechanic')
 );
@@ -107,7 +107,7 @@ CREATE TABLE Certifications(
 	certificate INTEGER NOT NULL,
 --
 -- certIC1: Each pilot's certificate must be unique
-CONSTRAINT certIC1 PRIMARY KEY (essn);
+CONSTRAINT certIC1 PRIMARY KEY (essn)
 );
 --
 --
@@ -116,7 +116,7 @@ CREATE TABLE Works_On(
 	fid INTEGER,
 --
 -- workIC1: Employees flight shifts are unique
-CONSTRAINT workIC1 PRIMARY KEY (essn, fid);
+CONSTRAINT workIC1 PRIMARY KEY (essn, fid)
 );
 --
 --
@@ -124,8 +124,9 @@ CREATE TABLE Passenger_Flight_Info(
 	passenger_id INTEGER,
 	fid INTEGER,
 	seat_number INTEGER NOT NULL,
-	PRIMARY KEY(passenger_id, fid)
--- <<more constraints needed!>>
+-- 
+-- infoIC1: Passenger seats on each flight are unique
+CONSTRAINT infoIC1 PRIMARY KEY (passenger_id, fid, seat_number)
 );
 --
 --
@@ -134,17 +135,15 @@ CREATE TABLE Seat_On_Flight(
 	seat_number INTEGER NOT NULL,
 	seat_type CHAR(10) NOT NULL,
 	PRIMARY KEY(fid, seat_number)
+	
 -- SeatOnIC1: seat_number cannot be less than zero 
--- (should/could we make this so that seat number is not greater than the seating 
--- capacity for the plane we are flying on?)
-CONSTRAINT SeatOnIC1 CHECK seat_number > 0
--- <<more constraints needed!>>
--- SeatOnIC2: seat_type must be in business, first, or economy
-CONSTRAINT SeatOnIC2 CHECK (seat_type IN ('Business', 'Economy', 'First'))
+CONSTRAINT SeatOnIC1 CHECK (seat_number > 0),
+-- SeatOnIC2: seat_type must be in first, business, or economy class
+CONSTRAINT SeatOnIC2 CHECK (seat_type IN ('Business', 'Economy', 'First')),
 -- SeatOnIC3: seat_number cannot be greater than the plane's capacity
-CONSTRAINT SeatOnIC3 CHECK (NOT (seat_number > (SELECT P.seating_capacity FROM Plane P
-, Seat_On_Flight S, Flight F WHERE F.fid = S.sid AND F.plane_id = P.plane_ID)))
-);
+--CONSTRAINT SeatOnIC3 CHECK (NOT (seat_number > (SELECT P.seating_capacity FROM Plane P
+--, Seat_On_Flight S, Flight F WHERE F.fid = S.sid AND F.plane_id = P.plane_ID)))
+)
 --
 SET FEEDBACK OFF 
 --
@@ -330,14 +329,6 @@ SELECT * FROM Seats_On_Flight;
 -- -----------------------------------------------------------------------------
 -- Perform SQL Queries
 -- -----------------------------------------------------------------------------
---Include the following for each query: 
---1. A comment line stating the query number and the feature(s) it demonstrates 
---(e.g. – Q25 – correlated subquery). 
---2. A comment line stating the query in English. 
---3. The SQL code for the query. 
---
---IMPORTANT: You may of course demonstrate more than one feature in any one query 
---and thus end up having to write fewer, but more interesting, queries. 
 --
 /* (Q1) - A join involving at least four relations
    (Q4) - SUM, AVG, MAX, and/or MIN in a query
@@ -349,11 +340,11 @@ SELECT m.essn, p.passenger_id, m.service_date
 FROM Passenger p, Flight f, Maintained m, Passenger_Flight_Info pf
 WHERE  p.passenger_id = pf.passenger_id AND pf.fid = f.fid AND f.plane_id = m.plane_id AND
 	   m.service_date IN (SELECT MAX (m.service_date)
-	   					 FROM Plane p
-	   					 WHERE m.plane_id = p.plane_id);
+	   		      FROM Plane p
+	   		      WHERE m.plane_id = p.plane_id);
 --
-/* 	(Q2) - A self-join
-	(Q3) - UNION, INTERSECT, and/or MINUS in a query
+/* (Q2) - A self-join
+   (Q3) - UNION, INTERSECT, and/or MINUS in a query
 	Find all Passenger's ID and Name who are Guardians over 18 years old 
 */
 SELECT p.passenger_id, p.name
@@ -366,13 +357,13 @@ WHERE p1.passenger_id = p2.guardian;
 --
 /* (Q5) - GROUP BY, HAVING, and ORDER BY, all appearing in the same query
 Show the Passenger's ID, Name, and Number of flights they have been on for
-all passengers who have been on more than 3 flights.
+all passengers who have been on more than 1 flight.
 */
 SELECT p.passenger_id, p.name, COUNT(*)
 FROM Passenger p, Passenger_Flight_Info pf
 WHERE p.passenger_id = pf.passenger_id
 GROUP BY p.passenger_id, p.name
-HAVING COUNT(*) > 3
+HAVING COUNT(*) > 1
 ORDER BY p.passenger_id;
 --
 /* (Q7) - A non-correlated subquery
@@ -381,7 +372,7 @@ Show the Passenger's ID and Name for any who have not yet been on a flight
 SELECT p.passenger_id, p.name
 FROM Passenger p
 WHERE p.passenger_id NOT IN (SELECT pf.passenger_id
-							 FROM Passenger_Flight_Info pf);
+			     FROM Passenger_Flight_Info pf);
 --
 /* (Q8) -  A relational DIVISION query
 Shoe the essn and name of every employee who has worked on every flight in the A4 gate
@@ -389,14 +380,14 @@ Shoe the essn and name of every employee who has worked on every flight in the A
 SELECT e.essn, e.name
 FROM Employee e
 WHERE NOT EXISTS ((SELECT f.gate
-				   FROM Flight f
-				   WHERE f.gate = 'A4')
-				 MINUS
-				   (SELECT f.gate
-				   	FROM Flight f, Works_On w
-				   	WHERE e.essn, w.essn AND
-				   		  w.fid = f.fid  AND
-				   		  f.gate = 'A4'));
+		   FROM Flight f
+		   WHERE f.gate = 'A4')
+		   MINUS
+		   (SELECT f.gate
+		    FROM Flight f, Works_On w
+		    WHERE e.essn, w.essn AND
+		    w.fid = f.fid  AND
+		    f.gate = 'A4'));
 --
 /* (Q9) - An outer join query
 Show the Passenger ID and Name for every passenger, and show the planes they are flying on
