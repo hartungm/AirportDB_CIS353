@@ -1,4 +1,4 @@
- SPOOL project.out
+SPOOL project.out
 SET ECHO ON
 
 /* 
@@ -153,7 +153,7 @@ SET FEEDBACK OFF
 -- Add the Foreign Keys
 -- -----------------------------------------------------------------------------
 ALTER TABLE Passenger
-ADD CONSTRAINT fk1 FOREIGN KEY (guardian) REFERENCES passenger(passenger_id)
+ADD CONSTRAINT fk1 FOREIGN KEY (guardian) REFERENCES Passenger(passenger_id)
 ON DELETE CASCADE
 Deferrable initially deferred;
 --
@@ -202,7 +202,7 @@ ADD CONSTRAINT fk12 FOREIGN KEY (fid) REFERENCES Flight(fid)
 Deferrable initially deferred;
 --
 -- -----------------------------------------------------------------------------
--- Stored Procedures
+-- Stored Procedures/Triggers
 -- -----------------------------------------------------------------------------
 --
 /* (SP1)
@@ -222,6 +222,56 @@ END numPassengers;
 SHOW ERROR 
 SELECT OBJECT_NAME FROM USER_PROCEDURES;
 --
+--
+/* (TRG1)
+ Only Maintenance personnel can perform maintenance on planes
+*/
+CREATE OR REPLACE TRIGGER TRG1
+BEFORE INSERT OR UPDATE OF essn ON Maintained
+FOR EACH ROW
+DECLARE
+ jobTitle Maintained.essn%TYPE;
+BEGIN
+ SELECT job_title
+ INTO jobTitle
+ FROM Employee E WHERE E.essn = :NEW.essn;
+
+ IF job_title <> 'Mechanic'
+ THEN
+ RAISE_APPLICATION_ERROR(-20001, '+++++INSERT or UPDATE
+ rejected. '||'Employee '||:NEW.essn|| ' is not a
+ mechanic');
+ END IF;
+END;
+/
+SHOW ERROR 
+--
+--
+/* (TRG2)
+ Only Maintenance personnel can perform maintenance on planes
+*/
+CREATE OR REPLACE TRIGGER TRG2
+BEFORE UPDATE OF job_title ON Employee
+FOR EACH ROW
+DECLARE
+ maintainance INTEGER;
+BEGIN
+IF (:OLD.job_title == 'Mechanic' AND :NEW.job_title != 'Mechanic')
+THEN
+ SELECT COUNT(*)
+ INTO maintainance
+ FROM Maintained M
+ WHERE M.essn = :OLD.essn
+ 
+ IF (maintainance > 0)
+ THEN
+ RAISE_APPLICATION_ERROR(-20001, '+++++ UPDATE
+ rejected. '||'Employee '||:NEW.essn|| ' appears in Maintanance log');
+ END IF;
+END IF;
+END;
+/
+SHOW ERROR 
 --
 -- -----------------------------------------------------------------------------
 -- Populate the database instance
