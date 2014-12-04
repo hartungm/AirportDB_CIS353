@@ -93,12 +93,12 @@ CONSTRAINT flightIC4 CHECK (gate IN ('A1', 'A2', 'A3', 'A4',
 CREATE TABLE Employee(
 	essn INTEGER,
 	name CHAR(20) NOT NULL,
-	job_title CHAR(20) NOT NULL,
+	job_title CHAR(20),
 --
 -- empIC1: Essn must be unique
 CONSTRAINT empIC1 PRIMARY KEY (essn),
 -- empIC2: Job Title must either be pilot, attendant, or mechanic
-CONSTRAINT emplIC2 CHECK (job_title IN ('Pilot', 'Attendant', 'Mechanic'))
+CONSTRAINT empIC2 CHECK (job_title IN ('Pilot', 'Attendant', 'Mechanic') AND NOT NULL)
 );
 --
 --
@@ -463,6 +463,15 @@ INSERT INTO Passenger VALUES (1, 'Trinity Marcus', 8, NULL);
 
 /* Testing: PassIC3 */
 INSERT INTO Passenger VALUES (2, 'Abigail Lin', 16, NULL);
+
+/* Testing: empIC2 */
+INSERT INTO Employee VALUES (7239925711, 'Dakota Gibbs', 'CEO');
+
+/* Testing: empIC2 */
+INSERT INTO Employee VALUES (7779920710, 'Raj Deep', '');
+
+/* Testing: empIC2 */
+INSERT INTO Employee VALUES (8693450000, 'Dante Brooks', NULL);
 
 COMMIT; 
 -- 
