@@ -455,19 +455,25 @@ SET AUTOCOMMIT ON
 /* Testing: PassIC1 (primary key)*/
 INSERT INTO Passenger VALUES (10, 'Jonathan Rosales', 29, NULL);
 --
+/* Testing: PassIC1 (primary key)*/
+INSERT INTO
+--
 /* Testing: fk1 (foreign key)*/
 INSERT INTO Passenger VALUES (5, 'Mary Ramus', 54, 2);
 --
-/*Testing: fk7 (foreign key)*/
-INSERT INTO Works_On VALUES (4760909232, 11);
+/* Testing: fk7 (foreign key)*/
+INSERT INTO Works_ON VALUES(0000000000, 100);
+-- 
+/* Testing: fk11 (foreign key, multiple attributes)*/
+INSERT INTO Passenger_Flight_Info VALUES (10, 1024, 1000);
 
-/*Testing: fk7 (foreign key)*/
-INSERT INTO WOrks_ON VALUES(0000000000, 100);
+/* Testking: fk11 (foreign key, multiple attributes)*/
+UPDATE Seat_On_Flight SET seat_number = 80 WHERE flight_id = 2204;
 --
-/* Testing: PassIC3 */
+/* Testing: PassIC2 (2-attribute, 1-row)*/
 INSERT INTO Passenger VALUES (1, 'Trinity Marcus', 8, NULL);
 
-/* Testing: PassIC3 */
+/* Testing: PassI2 (2-attribute, 1-row)*/
 INSERT INTO Passenger VALUES (2, 'Abigail Lin', 16, NULL);
 
 /* Testing: empIC2 */
@@ -481,6 +487,9 @@ INSERT INTO Employee VALUES (8693450000, 'Dante Brooks', NULL);
 
 /* Testing: TRG1 */
 INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-01 07:35:21', 5575290975);
+
+/* Testing: TRG2 */
+UPDATE Employee SET job_title = 'Attendant' WHERE essn = 3334562314;
 
 COMMIT; 
 -- 
