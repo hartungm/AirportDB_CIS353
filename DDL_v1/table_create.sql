@@ -98,7 +98,7 @@ CREATE TABLE Employee(
 -- empIC1: Essn must be unique
 CONSTRAINT empIC1 PRIMARY KEY (essn),
 -- empIC2: Job Title must either be pilot, attendant, or mechanic
-CONSTRAINT emplIC2 CHECK (job_title IN ('pilot', 'attendant', 'mechanic'))
+CONSTRAINT emplIC2 CHECK (job_title IN ('Pilot', 'Attendant', 'Mechanic'))
 );
 --
 --
@@ -134,7 +134,6 @@ CREATE TABLE Seat_On_Flight(
 	fid INTEGER,
 	seat_number INTEGER NOT NULL,
 	seat_type CHAR(10) NOT NULL,
-	PRIMARY KEY(fid, seat_number),
 --
 -- SeatIC1: Seat numbers on each flight are unique
 CONSTRAINT SeatIC1 PRIMARY KEY (fid, seat_number),
@@ -145,7 +144,7 @@ CONSTRAINT SeatIC3 CHECK (seat_type IN ('Business', 'Economy', 'First'))
 -- SeatOnIC3: seat_number cannot be greater than the plane's capacity
 --CONSTRAINT SeatOnIC3 CHECK (NOT (seat_number > (SELECT P.seating_capacity FROM Plane P
 --, Seat_On_Flight S, Flight F WHERE F.fid = S.sid AND F.plane_id = P.plane_ID)))
-)
+);
 --
 SET FEEDBACK OFF 
 --
@@ -175,7 +174,7 @@ ADD CONSTRAINT fk5 FOREIGN KEY (essn) REFERENCES Employee(essn)
 Deferrable initially deferred;
 --
 ALTER TABLE Certifications
-ADD CONSTRAINT fk6 FOREIGN KEY (certification) REFERENCES Plane(plane_id)
+ADD CONSTRAINT fk6 FOREIGN KEY (certificate) REFERENCES Plane(plane_id)
 Deferrable initially deferred;
 --
 ALTER TABLE Works_on
@@ -231,27 +230,27 @@ SELECT OBJECT_NAME FROM USER_PROCEDURES;
 --Important: Keep the number of rows in each table small enough so that the results of 
 --your queries can be verified by hand. See the Sailors database as an example.
 
-INSERT INTO Passengers VALUES (10, 'Xinyi Ou', 21, NULL);
-INSERT INTO Passengers VALUES (15, 'Ai Mei', 11, 10); /*needs guardian--Xinyi*/
-INSERT INTO Passengers VALUES (20, 'Eric Joffrey', 54, NULL);
-INSERT INTO Passengers VALUES (25, 'Allie Rowe', 31, NULL);
-INSERT INTO Passengers VALUES (30, 'Lucille Holloway', 24, NULL);
-INSERT INTO Passengers VALUES (35, 'Mohammed Tawfiq', 44, NULL);
-INSERT INTO Passengers VALUES (40, 'Adam Joffrey', 5, 20);
-INSERT INTO Passengers VALUES (45, 'Ada Joffrey', 7, 20);
-INSERT INTO Passengers VALUES (50, 'Jonathan Ramirez', 19, NULL);
+INSERT INTO Passenger VALUES (10, 'Xinyi Ou', 21, NULL);
+INSERT INTO Passenger VALUES (15, 'Ai Mei', 11, 10); --needs a guardian, Xinyi
+INSERT INTO Passenger VALUES (20, 'Eric Joffrey', 54, NULL);
+INSERT INTO Passenger VALUES (25, 'Allie Rowe', 31, NULL);
+INSERT INTO Passenger VALUES (30, 'Lucille Holloway', 24, NULL);
+INSERT INTO Passenger VALUES (35, 'Mohammed Tawfiq', 44, NULL);
+INSERT INTO Passenger VALUES (40, 'Adam Joffrey', 5, 20); --needs a guardian, Eric
+INSERT INTO Passenger VALUES (45, 'Ada Joffrey', 7, 20); --needs a guardian, Eric
+INSERT INTO Passenger VALUES (50, 'Jonathan Ramirez', 19, NULL);
 --
 INSERT INTO Plane VALUES (100, 6);
 INSERT INTO Plane VALUES (211, 120);
 INSERT INTO Plane VALUES (377, 85);
 INSERT INTO Plane VALUES (401, 12);
 --
-INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-01 07:35:21', 568-242-1353);
-INSERT INTO Maintained VALUES (401, TIMESTAMP '2014-10-31 18:04:56', 333-456-2314);
-INSERT INTO Maintained VALUES (211, TIMESTAMP '2014-11-04 09:37:40', 333-456-2314);
-INSERT INTO Maintained VALUES (377, TIMESTAMP '2014-11-10 16:12:22', 568-242-1353);
-INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-17 10:13:00', 568-242-1353);
-INSERT INTO Maintained VALUES (211, TIMESTAMP '2014-11-16 11:11:45', 333-456-2314);
+INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-01 07:35:21', 5682421353);
+INSERT INTO Maintained VALUES (401, TIMESTAMP '2014-10-31 18:04:56', 3334562314);
+INSERT INTO Maintained VALUES (211, TIMESTAMP '2014-11-04 09:37:40', 3334562314);
+INSERT INTO Maintained VALUES (377, TIMESTAMP '2014-11-10 16:12:22', 5682421353);
+INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-17 10:13:00', 5682421353);
+INSERT INTO Maintained VALUES (211, TIMESTAMP '2014-11-16 11:11:45', 3334562314);
 --
 INSERT INTO Flight VALUES(1024, 'Allendale, MI', 'Detroit, MI', TIMESTAMP '2014-11-21 10:32:00',
 		TIMESTAMP '2014-11-21 13:37:00', 'A3', 100);
@@ -280,19 +279,19 @@ INSERT INTO Certifications VALUES(5575290975, 211);
 INSERT INTO Certifications VALUES(7779562340, 211);
 INSERT INTO Certifications VALUES(2346124444, 401);
 --
-INSERT INTO Works_On VALUES (4872241285, 1024); /*Annabelle, attendant*/
-INSERT INTO Works_On VALUES (2346124444, 1024); /*Olga, pilot1*/
-INSERT INTO Works_On VALUES (8802361376, 1024); /*Brody, pilot2*/
-INSERT INTO Works_On VALUES (4872241285, 2204); /*Annabelle, attendant*/
-INSERT INTO Works_On VALUES (8802361376, 2204); /*Brody, pilot1*/
-INSERT INTO Works_On VALUES (5575290975, 2204); /*Tricia, pilot2*/
-INSERT INTO Works_On VALUES (2356694203, 9705); /*Mark, attendant1*/
-INSERT INTO Works_On VALUES (4760909232, 9705); /*Erin, attendant2*/
-INSERT INTO Works_On VALUES (7779562340, 9705); /*Matthew, pilot1 */
-INSERT INTO Works_On VALUES (5575290975, 9705); /*Tricia, pilot2 */
-INSERT INTO Works_On VALUES (4760909232, 5536); /*Erin, attendant*/
-INSERT INTO Works_On VALUES (2346124444, 5536); /*Olga, pilot1*/
-INSERT INTO Works_On VALUES (8802361376, 5536); /*Brody, pilot2*/
+INSERT INTO Works_On VALUES (4872241285, 1024); --Annabelle, attendant
+INSERT INTO Works_On VALUES (2346124444, 1024); --Olga, pilot1
+INSERT INTO Works_On VALUES (8802361376, 1024); --Brody, pilot2
+INSERT INTO Works_On VALUES (4872241285, 2204); --Annabelle, attendant
+INSERT INTO Works_On VALUES (8802361376, 2204); --Brody, pilot1
+INSERT INTO Works_On VALUES (5575290975, 2204); --Tricia, pilot2
+INSERT INTO Works_On VALUES (2356694203, 9705); --Mark, attendant1
+INSERT INTO Works_On VALUES (4760909232, 9705); --Erin, attendant2
+INSERT INTO Works_On VALUES (7779562340, 9705); --Matthew, pilot1
+INSERT INTO Works_On VALUES (5575290975, 9705); --Tricia, pilot2
+INSERT INTO Works_On VALUES (4760909232, 5536); --Erin, attendant
+INSERT INTO Works_On VALUES (2346124444, 5536); --Olga, pilot1
+INSERT INTO Works_On VALUES (8802361376, 5536); --Brody, pilot2
 --
 INSERT INTO Passenger_Flight_Info VALUES (10, 1024, 1);
 INSERT INTO Passenger_Flight_Info VALUES (15, 1024, 2);
@@ -329,7 +328,7 @@ SELECT * FROM Employee;
 SELECT * FROM Certifications;
 SELECT * FROM Works_On;
 SELECT * FROM Passenger_Flight_Info;
-SELECT * FROM Seats_On_Flight;
+SELECT * FROM Seat_On_Flight;
 --
 -- -----------------------------------------------------------------------------
 -- Perform SQL Queries
