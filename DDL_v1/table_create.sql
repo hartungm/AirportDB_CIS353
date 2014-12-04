@@ -48,7 +48,7 @@ CREATE TABLE Plane(
 	seating_capacity INTEGER NOT NULL,
 --
 -- planeIC1: plane IDs are unique
-CONSTRAINT planeIC1 PRIMARY KEY (plane, id),
+CONSTRAINT planeIC1 PRIMARY KEY (plane_id),
 -- planeIC2: seating_capacity must be greater than zero
 CONSTRAINT planeIC2 CHECK (seating_capacity > 0)
 );
@@ -60,7 +60,7 @@ CREATE TABLE Maintained(
 	essn INTEGER,
 --
 -- mainIC1: maintenance record has unique plane, timestamp, and personnel
-CONSTRAINT mainIC1 PRIMARY KEY(plane_id, service_date, essn),
+CONSTRAINT mainIC1 PRIMARY KEY(plane_id, service_date, essn)
 --
 -- mainIC2: Only maintenance workers can maintain on a plane (Not sure about this one)
 --CONSTRAINT mainIC2 CHECK( VALUE IN (SELECT E.essn FROM Employee E WHERE E.job_title = 
@@ -93,21 +93,21 @@ CONSTRAINT flightIC4 CHECK (gate IN ('A1', 'A2', 'A3', 'A4',
 CREATE TABLE Employee(
 	essn INTEGER,
 	name CHAR(20) NOT NULL,
-	job_title CHAR(20) NOT NULL
+	job_title CHAR(20) NOT NULL,
 --
 -- empIC1: Essn must be unique
 CONSTRAINT empIC1 PRIMARY KEY (essn),
 -- empIC2: Job Title must either be pilot, attendant, or mechanic
-CONSTRAINT emplIC2 CHECK (job_title IN ('pilot', 'attendant', 'mechanic')
+CONSTRAINT emplIC2 CHECK (job_title IN ('pilot', 'attendant', 'mechanic'))
 );
 --
 --
 CREATE TABLE Certifications(
 	essn INTEGER,
-	certificate INTEGER NOT NULL,
+	certificate INTEGER,
 --
 -- certIC1: Each pilot's certificate must be unique
-CONSTRAINT certIC1 PRIMARY KEY (essn)
+CONSTRAINT certIC1 PRIMARY KEY (essn, certificate)
 );
 --
 --
@@ -134,12 +134,14 @@ CREATE TABLE Seat_On_Flight(
 	fid INTEGER,
 	seat_number INTEGER NOT NULL,
 	seat_type CHAR(10) NOT NULL,
-	PRIMARY KEY(fid, seat_number)
-	
--- SeatOnIC1: seat_number cannot be less than zero 
-CONSTRAINT SeatOnIC1 CHECK (seat_number > 0),
--- SeatOnIC2: seat_type must be in first, business, or economy class
-CONSTRAINT SeatOnIC2 CHECK (seat_type IN ('Business', 'Economy', 'First')),
+	PRIMARY KEY(fid, seat_number),
+--
+-- SeatIC1: Seat numbers on each flight are unique
+CONSTRAINT SeatIC1 PRIMARY KEY (fid, seat_number),
+-- SeatIC2: seat_number cannot be less than zero 
+CONSTRAINT SeatIC2 CHECK (seat_number > 0),
+-- SeatIC3: seat_type must be in first, business, or economy class
+CONSTRAINT SeatIC3 CHECK (seat_type IN ('Business', 'Economy', 'First'))
 -- SeatOnIC3: seat_number cannot be greater than the plane's capacity
 --CONSTRAINT SeatOnIC3 CHECK (NOT (seat_number > (SELECT P.seating_capacity FROM Plane P
 --, Seat_On_Flight S, Flight F WHERE F.fid = S.sid AND F.plane_id = P.plane_ID)))
@@ -157,45 +159,47 @@ ON DELETE CASCADE
 Deferrable initially deferred;
 --
 ALTER TABLE Maintained
-ADD CONSTRAINT fk2 (plane_id) REFERENCES Plane(plane_id)
-ON DELETE CASCADE
+ADD CONSTRAINT fk2 FOREIGN KEY (plane_id) REFERENCES Plane(plane_id)
 Deferrable initially deferred;
 --
 ALTER Table Maintained
-ADD CONSTRAINT fk3 (essn) REFERENCES Employee(essn)
+ADD CONSTRAINT fk3 FOREIGN KEY (essn) REFERENCES Employee(essn)
 Deferrable initially deferred;
 --
 ALTER TABLE Flight 
-ADD CONSTRAINT fk4 (plane_id) REFERENCES Plane(plane_id)
-ON UPDATE CASCADE
+ADD CONSTRAINT fk4 FOREIGN KEY (plane_id) REFERENCES Plane(plane_id)
 Deferrable initially deferred;
 --
 ALTER TABLE Certifications
 ADD CONSTRAINT fk5 FOREIGN KEY (essn) REFERENCES Employee(essn)
 Deferrable initially deferred;
 --
-ALTER TABLE Works_on
-ADD CONSTRAINT fk6 FOREIGN KEY (essn) REFERENCES Employee(essn)
+ALTER TABLE Certifications
+ADD CONSTRAINT fk6 FOREIGN KEY (certification) REFERENCES Plane(plane_id)
 Deferrable initially deferred;
 --
 ALTER TABLE Works_on
-ADD CONSTRAINT fk7 FOREIGN KEY (fid) REFERENCES Flight(fid)
+ADD CONSTRAINT fk7 FOREIGN KEY (essn) REFERENCES Employee(essn)
+Deferrable initially deferred;
+--
+ALTER TABLE Works_on
+ADD CONSTRAINT fk8 FOREIGN KEY (fid) REFERENCES Flight(fid)
 Deferrable initially deferred;
 --
 ALTER TABLE Passenger_Flight_Info
-ADD CONSTRAINT fk8 FOREIGN KEY (passenger_id) REFERENCES Passenger(passenger_id)
+ADD CONSTRAINT fk9 FOREIGN KEY (passenger_id) REFERENCES Passenger(passenger_id)
 Deferrable initially deferred;
 --
 ALTER TABLE Passenger_Flight_Info
-ADD CONSTRAINT fk9 (fid) REFERENCES Flight(fid)
-Deferrable initially deferred;
---
-ALTER TABLE Seat_On_Flight
 ADD CONSTRAINT fk10 FOREIGN KEY (fid) REFERENCES Flight(fid)
 Deferrable initially deferred;
 --
 ALTER TABLE Passenger_Flight_Info
 ADD CONSTRAINT fk11 FOREIGN KEY (seat_number) REFERENCES Seat_On_Flight(seat_number)
+Deferrable initially deferred;
+--
+ALTER TABLE Seat_On_Flight
+ADD CONSTRAINT fk12 FOREIGN KEY (fid) REFERENCES Flight(fid)
 Deferrable initially deferred;
 --
 -- -----------------------------------------------------------------------------
@@ -215,6 +219,7 @@ num INTEGER;
     WHERE F.fid = id;
   RETURN num;
 END numPassengers;
+/
 SHOW ERROR 
 SELECT OBJECT_NAME FROM USER_PROCEDURES;
 --
@@ -257,37 +262,37 @@ INSERT INTO Flight VALUES(9705, 'Allendale, MI', 'Seattle, WA', TIMESTAMP '2014-
 INSERT INTO Flight VALUES(5536, 'Cincinnati, KY', 'Allendale, MI', TIMESTAMP '2014-11-22 14:09:00',
 		TIMESTAMP '2014-11-22 15:20:00', 'A4', 401);
 --
-INSERT INTO Employee VALUES(333-456-2314, 'Richard Marks', 'Mechanic');
-INSERT INTO Employee VALUES(568-240-1005, 'Elizabeth Volk', 'Mechanic');
-INSERT INTO Employee VALUES(487-224-1285, 'Annabelle VanSickle', 'Attendant');
-INSERT INTO Employee VALUES(235-669-4203, 'Mark DeRoy', 'Attendant');
-INSERT INTO Employee VALUES(476-090-9232, 'Erin Tripp', 'Attendant');
-INSERT INTO Employee VALUES(557-529-0975, 'Tricia Whittle', 'Pilot');
-INSERT INTO Employee VALUES(880-236-1376, 'Brody Young', 'Pilot');
-INSERT INTO Employee VALUES(234-612-4444, 'Olga Grianni', 'Pilot');
-INSERT INTO Employee VALUES(777-956-2340, 'Matthew Ingall', 'Pilot');
+INSERT INTO Employee VALUES(3334562314, 'Richard Marks', 'Mechanic');
+INSERT INTO Employee VALUES(5682401005, 'Elizabeth Volk', 'Mechanic');
+INSERT INTO Employee VALUES(4872241285, 'Annabelle VanSickle', 'Attendant');
+INSERT INTO Employee VALUES(2356694203, 'Mark DeRoy', 'Attendant');
+INSERT INTO Employee VALUES(4760909232, 'Erin Tripp', 'Attendant');
+INSERT INTO Employee VALUES(5575290975, 'Tricia Whittle', 'Pilot');
+INSERT INTO Employee VALUES(8802361376, 'Brody Young', 'Pilot');
+INSERT INTO Employee VALUES(2346124444, 'Olga Grianni', 'Pilot');
+INSERT INTO Employee VALUES(7779562340, 'Matthew Ingall', 'Pilot');
 --
-INSERT INTO Certifications VALUES(234-612-4444, 100);
-INSERT INTO Certifications VALUES(880-236-1376, 100);
-INSERT INTO Certifications VALUES(880-236-1376, 401);
-INSERT INTO Certifications VALUES(557-529-0975, 100);
-INSERT INTO Certifications VALUES(557-529-0975, 211);
-INSERT INTO Certifications VALUES(777-956-2340, 211);
-INSERT INTO Certifications VALUES(234-612-4444, 401);
+INSERT INTO Certifications VALUES(2346124444, 100);
+INSERT INTO Certifications VALUES(8802361376, 100);
+INSERT INTO Certifications VALUES(8802361376, 401);
+INSERT INTO Certifications VALUES(5575290975, 100);
+INSERT INTO Certifications VALUES(5575290975, 211);
+INSERT INTO Certifications VALUES(7779562340, 211);
+INSERT INTO Certifications VALUES(2346124444, 401);
 --
-INSERT INTO Works_On VALUES (487-224-1285, 1024); /*Annabelle, attendant*/
-INSERT INTO Works_On VALUES (234-612-4444, 1024); /*Olga, pilot1*/
-INSERT INTO Works_On VALUES (880-236-1376, 1024); /*Brody, pilot2*/
-INSERT INTO Works_On VALUES (487-224-1285, 2204); /*Annabelle, attendant*/
-INSERT INTO Works_On VALUES (880-236-1376, 2204); /*Brody, pilot1*/
-INSERT INTO Works_On VALUES (557-529-0975, 2204); /*Tricia, pilot2*/
-INSERT INTO Works_On VALUES (235-669-4203, 9705); /*Mark, attendant1*/
-INSERT INTO Works_On VALUES (476-090-9232, 9705); /*Erin, attendant2*/
-INSERT INTO Works_On VALUES (777-956-2340, 9705); /*Matthew, pilot1 */
-INSERT INTO Works_On VALUES (557-529-0975, 9705); /*Tricia, pilot2 */
-INSERT INTO Works_On VALUES (476-090-9232, 5536); /*Erin, attendant*/
-INSERT INTO Works_On VALUES (234-612-4444, 5536); /*Olga, pilot1*/
-INSERT INTO Works_On VALUES (880-236-1376, 5536); /*Brody, pilot2*/
+INSERT INTO Works_On VALUES (4872241285, 1024); /*Annabelle, attendant*/
+INSERT INTO Works_On VALUES (2346124444, 1024); /*Olga, pilot1*/
+INSERT INTO Works_On VALUES (8802361376, 1024); /*Brody, pilot2*/
+INSERT INTO Works_On VALUES (4872241285, 2204); /*Annabelle, attendant*/
+INSERT INTO Works_On VALUES (8802361376, 2204); /*Brody, pilot1*/
+INSERT INTO Works_On VALUES (5575290975, 2204); /*Tricia, pilot2*/
+INSERT INTO Works_On VALUES (2356694203, 9705); /*Mark, attendant1*/
+INSERT INTO Works_On VALUES (4760909232, 9705); /*Erin, attendant2*/
+INSERT INTO Works_On VALUES (7779562340, 9705); /*Matthew, pilot1 */
+INSERT INTO Works_On VALUES (5575290975, 9705); /*Tricia, pilot2 */
+INSERT INTO Works_On VALUES (4760909232, 5536); /*Erin, attendant*/
+INSERT INTO Works_On VALUES (2346124444, 5536); /*Olga, pilot1*/
+INSERT INTO Works_On VALUES (8802361376, 5536); /*Brody, pilot2*/
 --
 INSERT INTO Passenger_Flight_Info VALUES (10, 1024, 1);
 INSERT INTO Passenger_Flight_Info VALUES (15, 1024, 2);
@@ -299,18 +304,18 @@ INSERT INTO Passenger_Flight_Info VALUES (25, 2204, 4);
 INSERT INTO Passenger_Flight_Info VALUES (35, 9705, 88);
 INSERT INTO Passenger_Flight_Info VALUES (50, 5536, 10);
 --
-INSERT INTO Seat_On_Flight (1024, 1, 'Business');
-INSERT INTO Seat_On_Flight (1024, 2, 'Business');
-INSERT INTO Seat_On_Flight (1024, 3, 'Economy');
-INSERT INTO Seat_On_Flight (1024, 4, 'Economy');
-INSERT INTO Seat_On_Flight (1024, 5, 'Economy');
-INSERT INTO Seat_On_Flight (1024, 6, 'Economy');
-INSERT INTO Seat_On_Flight (2204, 4, 'First');
-INSERT INTO Seat_On_Flight (9705, 88, 'Economy');
-INSERT INTO Seat_On_Flight (5536, 10, 'First');
+INSERT INTO Seat_On_Flight VALUES (1024, 1, 'Business');
+INSERT INTO Seat_On_Flight VALUES (1024, 2, 'Business');
+INSERT INTO Seat_On_Flight VALUES (1024, 3, 'Economy');
+INSERT INTO Seat_On_Flight VALUES (1024, 4, 'Economy');
+INSERT INTO Seat_On_Flight VALUES (1024, 5, 'Economy');
+INSERT INTO Seat_On_Flight VALUES (1024, 6, 'Economy');
+INSERT INTO Seat_On_Flight VALUES (2204, 4, 'First');
+INSERT INTO Seat_On_Flight VALUES (9705, 88, 'Economy');
+INSERT INTO Seat_On_Flight VALUES (5536, 10, 'First');
 --
 SET FEEDBACK ON 
-COMMIT 
+COMMIT
 -- 
 -- -----------------------------------------------------------------------------
 -- Show the database instance
@@ -385,7 +390,7 @@ WHERE NOT EXISTS ((SELECT f.gate
 		   MINUS
 		   (SELECT f.gate
 		    FROM Flight f, Works_On w
-		    WHERE e.essn, w.essn AND
+		    WHERE e.essn = w.essn AND
 		    w.fid = f.fid  AND
 		    f.gate = 'A4'));
 --
