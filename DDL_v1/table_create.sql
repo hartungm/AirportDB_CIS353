@@ -236,7 +236,7 @@ BEGIN
  INTO jobTitle
  FROM Employee E WHERE E.essn = :NEW.essn;
 
- IF job_title <> 'Mechanic'
+ IF (jobTitle != 'Mechanic')
  THEN
  RAISE_APPLICATION_ERROR(-20001, '+++++INSERT or UPDATE
  rejected. '||'Employee '||:NEW.essn|| ' is not a
@@ -256,7 +256,7 @@ FOR EACH ROW
 DECLARE
  maintainance INTEGER;
 BEGIN
-IF (:OLD.job_title == 'Mechanic' AND :NEW.job_title != 'Mechanic')
+IF (:OLD.job_title = 'Mechanic' AND :NEW.job_title != 'Mechanic')
 THEN
  SELECT COUNT(*)
  INTO maintainance
