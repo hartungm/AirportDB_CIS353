@@ -421,7 +421,7 @@ INSERT INTO Passengers VALUES (1, 'Trinity Marcus', 8, NULL);
 /* Testing: PassIC3 */
 INSERT INTO Passengers VALUES (2, 'Abigail Lin', 16, NULL);
 
-COMMIT 
+COMMIT; 
 -- 
 SET ECHO OFF
 SPOOL OFF
