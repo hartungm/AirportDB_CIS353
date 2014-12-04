@@ -9,6 +9,7 @@ Evan Dunne
 Michael Hartung
 Xinyi Ou
 */ 
+SET FEEDBACK OFF
 -- -----------------------------------------------------------------------------
 -- Drop the tables (in case they already exist)
 -- -----------------------------------------------------------------------------
@@ -22,6 +23,7 @@ DROP TABLE Works_On CASCADE CONSTRAINTS;
 DROP TABLE Passenger_Flight_Info CASCADE CONSTRAINTS;
 DROP TABLE Seat_On_Flight CASCADE CONSTRAINTS;
 --
+SET FEEDBACK ON
 -- -----------------------------------------------------------------------------
 -- Create the tables
 -- -----------------------------------------------------------------------------
@@ -382,6 +384,15 @@ SHOW ERROR
 -- Perform SQL Queries
 -- -----------------------------------------------------------------------------
 --
+/*
+ A Query to test the stored procedure, numPassengers
+ 	Find the flight ID, number of passengers, plane ID, and seating capacity
+ 	for all flights.
+*/
+SELECT F.Fid, numPassengers(Fid), P.Plane_id, P.seating_capacity
+FROM Flight F, Plane P
+WHERE F.Plane_id = P.Plane_id;
+--
 /* (Q1) - A join involving at least four relations
    (Q4) - SUM, AVG, MAX, and/or MIN in a query
    (Q6) - A correlated subquery
@@ -419,7 +430,7 @@ HAVING COUNT(*) > 0
 ORDER BY p.passenger_id;
 --
 /* (Q7) - A non-correlated subquery
-Show the Passenger's ID and Name for any who have not yet been on a flight
+Show the plane ID and seating capacity for a plane that is not scheduled for a flight
 */
 SELECT P.plane_id, P.seating_capacity
 FROM Plane P
@@ -445,7 +456,8 @@ WHERE NOT EXISTS ((SELECT f.gate
 	Show the Passenger ID and Name for every passenger, and show the planes they are flying on
 */
 SELECT p.passenger_id, p.name, pf.fid
-FROM Passenger p LEFT OUTER JOIN Passenger_Flight_Info pf ON p.passenger_id = pf.passenger_id;
+FROM Passenger p LEFT OUTER JOIN Passenger_Flight_Info pf 
+ON p.passenger_id = pf.passenger_id;
 --
 -- -----------------------------------------------------------------------------
 -- Test Integrity Constraints
@@ -468,7 +480,7 @@ INSERT INTO Works_ON VALUES(0000000000, 100);
 INSERT INTO Passenger_Flight_Info VALUES (10, 1024, 1000);
 
 /* Testking: fk11 (foreign key, multiple attributes)*/
-UPDATE Seat_On_Flight SET seat_number = 80 WHERE flight_id = 2204;
+UPDATE Seat_On_Flight SET seat_number = 80 WHERE fid = 2204;
 --
 /* Testing: PassIC2 (2-attribute, 1-row)*/
 INSERT INTO Passenger VALUES (1, 'Trinity Marcus', 8, NULL);
@@ -476,19 +488,19 @@ INSERT INTO Passenger VALUES (1, 'Trinity Marcus', 8, NULL);
 /* Testing: PassI2 (2-attribute, 1-row)*/
 INSERT INTO Passenger VALUES (2, 'Abigail Lin', 16, NULL);
 
-/* Testing: empIC2 */
+/* Testing: empIC2 (1-attribute)*/
 INSERT INTO Employee VALUES (7239925711, 'Dakota Gibbs', 'CEO');
 
-/* Testing: empIC2 */
+/* Testing: empIC2 (1-attribute)*/
 INSERT INTO Employee VALUES (7779920710, 'Raj Deep', '');
 
-/* Testing: empIC2 */
+/* Testing: empIC2 (1-attribute)*/
 INSERT INTO Employee VALUES (8693450000, 'Dante Brooks', NULL);
 
-/* Testing: TRG1 */
+/* Testing: TRG1 (Trigger)*/
 INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-01 07:35:21', 5575290975);
 
-/* Testing: TRG2 */
+/* Testing: TRG2 (Trigger)*/
 UPDATE Employee SET job_title = 'Attendant' WHERE essn = 3334562314;
 
 COMMIT; 
