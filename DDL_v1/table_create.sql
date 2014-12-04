@@ -91,27 +91,32 @@ CONSTRAINT flightIC4 CHECK (gate IN ('A1', 'A2', 'A3', 'A4',
 --
 --
 CREATE TABLE Employee(
-	essn INTEGER PRIMARY KEY,
+	essn INTEGER,
 	name CHAR(20) NOT NULL,
 	job_title CHAR(20) NOT NULL
 --
--- <<more constraints needed!>>
---emplIC1: Job Title must either be pilot, attendant, or mechanic
-CONSTRAINT emplIC1 CHECK (job_title IN ('pilot', 'attendant', 'mechanic')
+-- empIC1: Essn must be unique
+CONSTRAINT empIC1 PRIMARY KEY (essn);
+-- empIC2: Job Title must either be pilot, attendant, or mechanic
+CONSTRAINT emplIC2 CHECK (job_title IN ('pilot', 'attendant', 'mechanic')
 );
 --
 --
 CREATE TABLE Certifications(
 	essn INTEGER,
-	certificate CHAR(20) NOT NULL,
-	PRIMARY KEY(essn, certificate)
+	certificate INTEGER NOT NULL,
+--
+-- certIC1: Each pilot's certificate must be unique
+CONSTRAINT certIC1 PRIMARY KEY (essn);
 );
 --
 --
 CREATE TABLE Works_On(
 	essn INTEGER,
 	fid INTEGER,
-	PRIMARY KEY(essn, fid)
+--
+-- workIC1: Employees flight shifts are unique
+CONSTRAINT workIC1 PRIMARY KEY (essn, fid);
 );
 --
 --
