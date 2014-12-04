@@ -98,7 +98,7 @@ CREATE TABLE Employee(
 -- empIC1: Essn must be unique
 CONSTRAINT empIC1 PRIMARY KEY (essn),
 -- empIC2: Job Title must either be pilot, attendant, or mechanic
-CONSTRAINT empIC2 CHECK (job_title IN ('Pilot', 'Attendant', 'Mechanic') AND NOT NULL)
+CONSTRAINT empIC2 CHECK (job_title IN ('Pilot', 'Attendant', 'Mechanic') AND job_title IS NOT NULL)
 );
 --
 --
@@ -200,78 +200,6 @@ Deferrable initially deferred;
 ALTER TABLE Seat_On_Flight
 ADD CONSTRAINT fk12 FOREIGN KEY (fid) REFERENCES Flight(fid)
 Deferrable initially deferred;
---
--- -----------------------------------------------------------------------------
--- Stored Procedures/Triggers
--- -----------------------------------------------------------------------------
---
-/* (SP1)
- Calculates the number of passengers currently booked on a given flight
-*/
-CREATE OR REPLACE FUNCTION numPassengers(id IN Passenger_Flight_Info.fid%TYPE) 
-RETURN INTEGER IS
---
-num INTEGER;
-  BEGIN
-    SELECT Count(*) INTO num
-    FROM Passenger_Flight_Info F
-    WHERE F.fid = id;
-  RETURN num;
-END numPassengers;
-/
-SHOW ERROR 
-SELECT OBJECT_NAME FROM USER_PROCEDURES;
---
---
-/* (TRG1)
- Only Maintenance personnel can perform maintenance on planes
-*/
-CREATE OR REPLACE TRIGGER TRG1
-BEFORE INSERT OR UPDATE OF essn ON Maintained
-FOR EACH ROW
-DECLARE
- jobTitle Maintained.essn%TYPE;
-BEGIN
- SELECT job_title
- INTO jobTitle
- FROM Employee E WHERE E.essn = :NEW.essn;
-
- IF (jobTitle != 'Mechanic')
- THEN
- RAISE_APPLICATION_ERROR(-20001, '+++++INSERT or UPDATE
- rejected. '||'Employee '||:NEW.essn|| ' is not a
- mechanic');
- END IF;
-END;
-/
-SHOW ERROR 
---
---
-/* (TRG2)
- Only Maintenance personnel can perform maintenance on planes
-*/
-CREATE OR REPLACE TRIGGER TRG2
-BEFORE UPDATE OF job_title ON Employee
-FOR EACH ROW
-DECLARE
- maintainance INTEGER;
-BEGIN
-IF (:OLD.job_title = 'Mechanic' AND :NEW.job_title != 'Mechanic')
-THEN
- SELECT COUNT(*)
- INTO maintainance
- FROM Maintained M
- WHERE M.essn = :OLD.essn
- 
- IF (maintainance > 0)
- THEN
- RAISE_APPLICATION_ERROR(-20001, '+++++ UPDATE
- rejected. '||'Employee '||:NEW.essn|| ' appears in Maintanance log');
- END IF;
-END IF;
-END;
-/
-SHOW ERROR 
 --
 -- -----------------------------------------------------------------------------
 -- Populate the database instance
@@ -379,6 +307,78 @@ SELECT * FROM Passenger_Flight_Info;
 SELECT * FROM Seat_On_Flight;
 --
 -- -----------------------------------------------------------------------------
+-- Stored Procedures/Triggers
+-- -----------------------------------------------------------------------------
+--
+/* (SP1)
+ Calculates the number of passengers currently booked on a given flight
+*/
+CREATE OR REPLACE FUNCTION numPassengers(id IN Passenger_Flight_Info.fid%TYPE) 
+RETURN INTEGER IS
+--
+num INTEGER;
+  BEGIN
+    SELECT Count(*) INTO num
+    FROM Passenger_Flight_Info F
+    WHERE F.fid = id;
+  RETURN num;
+END numPassengers;
+/
+SHOW ERROR 
+SELECT OBJECT_NAME FROM USER_PROCEDURES;
+--
+--
+/* (TRG1)
+ Only Maintenance personnel can perform maintenance on planes
+*/
+CREATE OR REPLACE TRIGGER TRG1
+BEFORE INSERT OR UPDATE OF essn ON Maintained
+FOR EACH ROW
+DECLARE
+ jobTitle Employee.job_title%TYPE;
+BEGIN
+ SELECT job_title
+ INTO jobTitle
+ FROM Employee E WHERE E.essn = :NEW.essn;
+
+ IF (jobTitle != 'Mechanic')
+ THEN
+ RAISE_APPLICATION_ERROR(-20001, '+++++INSERT or UPDATE
+ rejected. '||'Employee '||:NEW.essn|| ' is not a
+ mechanic');
+ END IF;
+END;
+/
+SHOW ERROR 
+--
+--
+/* (TRG2)
+ Only Maintenance personnel can perform maintenance on planes
+*/
+CREATE OR REPLACE TRIGGER TRG2
+BEFORE UPDATE OF job_title ON Employee
+FOR EACH ROW
+DECLARE
+ maintainance INTEGER;
+BEGIN
+IF (:OLD.job_title = 'Mechanic' AND :NEW.job_title != 'Mechanic')
+THEN
+ SELECT COUNT(*)
+ INTO maintainance
+ FROM Maintained M
+ WHERE M.essn = :OLD.essn;
+ 
+ IF (maintainance > 0)
+ THEN
+ RAISE_APPLICATION_ERROR(-20001, '+++++ UPDATE
+ rejected. '||'Employee '||:NEW.essn|| ' appears in Maintanance log');
+ END IF;
+END IF;
+END;
+/
+SHOW ERROR 
+--
+-- -----------------------------------------------------------------------------
 -- Perform SQL Queries
 -- -----------------------------------------------------------------------------
 --
@@ -455,8 +455,14 @@ SET AUTOCOMMIT ON
 /* Testing: PassIC1 (primary key)*/
 INSERT INTO Passenger VALUES (10, 'Jonathan Rosales', 29, NULL);
 --
-/* Testing: PassIC2 (foreign key)*/
+/* Testing: fk1 (foreign key)*/
 INSERT INTO Passenger VALUES (5, 'Mary Ramus', 54, 2);
+--
+/*Testing: fk7 (foreign key)*/
+INSERT INTO Works_On VALUES (4760909232, 11);
+
+/*Testing: fk7 (foreign key)*/
+INSERT INTO WOrks_ON VALUES(0000000000, 100);
 --
 /* Testing: PassIC3 */
 INSERT INTO Passenger VALUES (1, 'Trinity Marcus', 8, NULL);
@@ -472,6 +478,9 @@ INSERT INTO Employee VALUES (7779920710, 'Raj Deep', '');
 
 /* Testing: empIC2 */
 INSERT INTO Employee VALUES (8693450000, 'Dante Brooks', NULL);
+
+/* Testing: TRG1 */
+INSERT INTO Maintained VALUES (100, TIMESTAMP '2014-11-01 07:35:21', 5575290975);
 
 COMMIT; 
 -- 
