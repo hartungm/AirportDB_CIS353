@@ -408,26 +408,26 @@ FROM Passenger p1, Passenger p2
 WHERE p1.passenger_id = p2.guardian;
 --
 /* (Q5) - GROUP BY, HAVING, and ORDER BY, all appearing in the same query
-Show the Passenger's ID, Name, and Number of flights they have been on for
-all passengers who have been on more than 1 flight.
+	Show the Passenger's ID, Name, and Number of flights they have been on for
+	all passengers who have been on at least one flight.
 */
 SELECT p.passenger_id, p.name, COUNT(*)
 FROM Passenger p, Passenger_Flight_Info pf
 WHERE p.passenger_id = pf.passenger_id
 GROUP BY p.passenger_id, p.name
-HAVING COUNT(*) > 1
+HAVING COUNT(*) > 0
 ORDER BY p.passenger_id;
 --
 /* (Q7) - A non-correlated subquery
 Show the Passenger's ID and Name for any who have not yet been on a flight
 */
-SELECT p.passenger_id, p.name
-FROM Passenger p
-WHERE p.passenger_id NOT IN (SELECT pf.passenger_id
-			     FROM Passenger_Flight_Info pf);
+SELECT P.plane_id, P.seating_capacity
+FROM Plane P
+WHERE P.plane_id NOT IN (SELECT F.plane_id
+			     FROM Flight F);
 --
 /* (Q8) -  A relational DIVISION query
-Shoe the essn and name of every employee who has worked on every flight in the A4 gate
+	Shoe the essn and name of every employee who has worked on every flight in the A4 gate
 */
 SELECT e.essn, e.name
 FROM Employee e
@@ -442,7 +442,7 @@ WHERE NOT EXISTS ((SELECT f.gate
 		    f.gate = 'A4'));
 --
 /* (Q9) - An outer join query
-Show the Passenger ID and Name for every passenger, and show the planes they are flying on
+	Show the Passenger ID and Name for every passenger, and show the planes they are flying on
 */
 SELECT p.passenger_id, p.name, pf.fid
 FROM Passenger p LEFT OUTER JOIN Passenger_Flight_Info pf ON p.passenger_id = pf.passenger_id;
