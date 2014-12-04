@@ -1,4 +1,4 @@
-﻿SPOOL project.out
+ SPOOL project.out
 SET ECHO ON
 
 /* 
@@ -20,7 +20,7 @@ DROP TABLE Employee CASCADE CONSTRAINTS;
 DROP TABLE Certifications CASCADE CONSTRAINTS;
 DROP TABLE Works_On CASCADE CONSTRAINTS;
 DROP TABLE Passenger_Flight_Info CASCADE CONSTRAINTS;
-DROP TABLE Seats_On_Flight CASCADE CONSTRAINTS;
+DROP TABLE Seat_On_Flight CASCADE CONSTRAINTS;
 --
 -- -----------------------------------------------------------------------------
 -- Create the tables
@@ -194,7 +194,7 @@ ADD CONSTRAINT fk10 FOREIGN KEY (fid) REFERENCES Flight(fid)
 Deferrable initially deferred;
 --
 ALTER TABLE Passenger_Flight_Info
-ADD CONSTRAINT fk11 FOREIGN KEY (seat_number) REFERENCES Seat_On_Flight(seat_number)
+ADD CONSTRAINT fk11 FOREIGN KEY (fid, seat_number) REFERENCES Seat_On_Flight(fid, seat_number)
 Deferrable initially deferred;
 --
 ALTER TABLE Seat_On_Flight
@@ -226,10 +226,7 @@ SELECT OBJECT_NAME FROM USER_PROCEDURES;
 -- -----------------------------------------------------------------------------
 -- Populate the database instance
 -- -----------------------------------------------------------------------------
---< The INSERT statements that populate the tables> 
---Important: Keep the number of rows in each table small enough so that the results of 
---your queries can be verified by hand. See the Sailors database as an example.
-
+SET AUTOCOMMIT OFF
 INSERT INTO Passenger VALUES (10, 'Xinyi Ou', 21, NULL);
 INSERT INTO Passenger VALUES (15, 'Ai Mei', 11, 10); --needs a guardian, Xinyi
 INSERT INTO Passenger VALUES (20, 'Eric Joffrey', 54, NULL);
@@ -314,7 +311,8 @@ INSERT INTO Seat_On_Flight VALUES (9705, 88, 'Economy');
 INSERT INTO Seat_On_Flight VALUES (5536, 10, 'First');
 --
 SET FEEDBACK ON 
-COMMIT
+ALTER SESSION SET NLS_TIMESTAMP_FORMAT = 'MM-DD-YY HH:MI';
+COMMIT;
 -- 
 -- -----------------------------------------------------------------------------
 -- Show the database instance
@@ -402,23 +400,19 @@ FROM Passenger p LEFT OUTER JOIN Passenger_Flight_Info pf ON p.passenger_id = pf
 -- -----------------------------------------------------------------------------
 -- Test Integrity Constraints
 -- -----------------------------------------------------------------------------
---< The insert/delete/update statements to test the enforcement of ICs > 
---Include the following items for every IC that you test (Important: see the next section titled 
---“Submit a final report” regarding which ICs to test). 
---A comment line stating: Testing: < IC name> 
---A SQL INSERT, DELETE, or UPDATE that will test the IC.
+SET AUTOCOMMIT ON
 --
 /* Testing: PassIC1 (primary key)*/
-INSERT INTO Passengers VALUES (10, 'Jonathan Rosales', 29, NULL);
+INSERT INTO Passenger VALUES (10, 'Jonathan Rosales', 29, NULL);
 --
 /* Testing: PassIC2 (foreign key)*/
-INSERT INTO Passengers VALUES (5, 'Mary Ramus', 54, 2);
+INSERT INTO Passenger VALUES (5, 'Mary Ramus', 54, 2);
 --
 /* Testing: PassIC3 */
-INSERT INTO Passengers VALUES (1, 'Trinity Marcus', 8, NULL);
+INSERT INTO Passenger VALUES (1, 'Trinity Marcus', 8, NULL);
 
 /* Testing: PassIC3 */
-INSERT INTO Passengers VALUES (2, 'Abigail Lin', 16, NULL);
+INSERT INTO Passenger VALUES (2, 'Abigail Lin', 16, NULL);
 
 COMMIT; 
 -- 
