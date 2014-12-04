@@ -2,7 +2,6 @@
 SET ECHO ON
 
 /* 
-Test Comment
 CIS 353 - Database Design Project (PEMN-X Airport)
 Nick Bushen
 Patrick Dishaw
@@ -264,12 +263,13 @@ INSERT INTO Employee VALUES(880-236-1376, 'Brody Young', 'Pilot');
 INSERT INTO Employee VALUES(234-612-4444, 'Olga Grianni', 'Pilot');
 INSERT INTO Employee VALUES(777-956-2340, 'Matthew Ingall', 'Pilot');
 --
-INSERT INTO Certifications VALUES();
-INSERT INTO Certifications VALUES();
-INSERT INTO Certifications VALUES();
-INSERT INTO Certifications VALUES();
-INSERT INTO Certifications VALUES();
-INSERT INTO Certifications VALUES();
+INSERT INTO Certifications VALUES(234-612-4444, 100);
+INSERT INTO Certifications VALUES(880-236-1376, 100);
+INSERT INTO Certifications VALUES(880-236-1376, 401);
+INSERT INTO Certifications VALUES(557-529-0975, 100);
+INSERT INTO Certifications VALUES(557-529-0975, 211);
+INSERT INTO Certifications VALUES(777-956-2340, 211);
+INSERT INTO Certifications VALUES(234-612-4444, 401);
 --
 INSERT INTO Works_On VALUES (487-224-1285, 1024); /*Annabelle, attendant*/
 INSERT INTO Works_On VALUES (234-612-4444, 1024); /*Olga, pilot1*/
